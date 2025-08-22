@@ -19,10 +19,16 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         {Array.from({ length: 20 }, (_, i) => (
           <div
             key={i}
-            className="absolute animate-fall text-2xl opacity-70 text-blue-university"
+            className="absolute animate-fall text-2xl opacity-70"
             style={{
               left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`
+              animationDelay: `${Math.random() * 3}s`,
+              color: '#010068'
+            }}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              color: '#010068'
             }}
           >
             💙
@@ -31,10 +37,11 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         {Array.from({ length: 15 }, (_, i) => (
           <div
             key={`heart-${i}`}
-            className="absolute animate-fall-slow text-xl opacity-60 text-blue-university"
+            className="absolute animate-fall-slow text-xl opacity-60"
             style={{
               left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`
+              animationDelay: `${Math.random() * 4}s`,
+              color: '#010068'
             }}
           >
             💙
