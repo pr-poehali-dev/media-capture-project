@@ -146,6 +146,13 @@ const Index = () => {
   const renderStartScreen = () => (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-blue-50 to-green-50">
       <div className="text-center mb-12">
+        <div className="mb-8">
+          <img 
+            src="https://cdn.poehali.dev/files/0ccd0fdd-93aa-41f8-ad8d-66467510a595.jpeg"
+            alt="IMPERIA PROMO"
+            className="w-48 h-auto mx-auto mb-4"
+          />
+        </div>
         <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-green-500 rounded-3xl flex items-center justify-center">
           <Icon name="Camera" size={36} className="text-white" />
         </div>
