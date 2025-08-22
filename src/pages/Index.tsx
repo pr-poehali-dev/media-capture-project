@@ -156,7 +156,7 @@ const Index = () => {
         size="lg"
         className="w-full max-w-sm mx-auto h-16 text-xl font-semibold bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg mb-8"
       >
-        Начать
+        Новый лид
         <Icon name="ArrowRight" size={24} className="ml-2" />
       </Button>
     </div>
