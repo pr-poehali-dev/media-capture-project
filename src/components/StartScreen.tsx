@@ -8,12 +8,16 @@ interface StartScreenProps {
 const StartScreen = ({ onStart }: StartScreenProps) => {
   return (
     <div 
-      className="flex flex-col justify-end min-h-screen p-6 bg-cover bg-center bg-no-repeat"
+      className="flex flex-col justify-end min-h-screen p-6 bg-cover bg-center bg-no-repeat relative overflow-hidden"
       style={{
         backgroundImage: `url('https://cdn.poehali.dev/files/0ccd0fdd-93aa-41f8-ad8d-66467510a595.jpeg')`,
         backgroundSize: 'contain'
       }}
     >
+      {/* Блестящий эффект shine поверх фонового изображения */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40 animate-shine"></div>
+      </div>
       <Button 
         onClick={onStart}
         size="lg"
