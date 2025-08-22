@@ -26,39 +26,68 @@ const Index = () => {
 
   const startVideoRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' }, 
-        audio: true 
-      });
+      // Улучшенные настройки для мобильных устройств и iPhone
+      const constraints = {
+        video: {
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          frameRate: { ideal: 30 },
+          facingMode: 'environment'
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.playsInline = true; // Важно для iPhone
+        videoRef.current.muted = true;
+        // Принудительное воспроизведение
+        await videoRef.current.play();
       }
 
-      const mediaRecorder = new MediaRecorder(stream);
+      // Настройки MediaRecorder для лучшей совместимости с iPhone
+      let mimeType = 'video/webm';
+      if (MediaRecorder.isTypeSupported('video/mp4')) {
+        mimeType = 'video/mp4';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        mimeType = 'video/webm;codecs=vp9';
+      }
+
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       
       const chunks: BlobPart[] = [];
       mediaRecorder.ondataavailable = (event) => {
-        chunks.push(event.data);
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        setRecordedVideo(url);
-        
-        // Остановка стрима
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
+        if (event.data.size > 0) {
+          chunks.push(event.data);
         }
       };
 
-      mediaRecorder.start();
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        setRecordedVideo(url);
+        
+        // Остановка всех треков
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => {
+            track.stop();
+          });
+        }
+      };
+
+      mediaRecorder.start(1000); // Записываем чанки каждую секунду
       setIsRecording(true);
     } catch (error) {
       console.error('Ошибка доступа к камере:', error);
+      alert(`Не удалось получить доступ к камере: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
     }
   };
 
@@ -69,12 +98,38 @@ const Index = () => {
     }
   };
 
-  const downloadVideo = () => {
+  const downloadVideo = async () => {
     if (recordedVideo) {
-      const a = document.createElement('a');
-      a.href = recordedVideo;
-      a.download = 'recorded-video.webm';
-      a.click();
+      try {
+        // Для iPhone используем более совместимый способ сохранения
+        const response = await fetch(recordedVideo);
+        const blob = await response.blob();
+        
+        // Определяем расширение файла по MIME типу
+        const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
+        const filename = `video_${new Date().getTime()}.${extension}`;
+        
+        // Создаём ссылку для скачивания
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.style.display = 'none';
+        
+        // Добавляем в DOM, кликаем и удаляем
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Очищаем URL объект
+        setTimeout(() => {
+          URL.revokeObjectURL(a.href);
+        }, 100);
+        
+        alert('Видео сохранено в галерею устройства!');
+      } catch (error) {
+        console.error('Ошибка сохранения видео:', error);
+        alert('Не удалось сохранить видео');
+      }
     }
   };
 
@@ -192,8 +247,10 @@ const Index = () => {
             <video 
               ref={videoRef}
               autoPlay 
+              playsInline
               muted 
               className="w-full h-64 object-cover rounded-2xl bg-black"
+              style={{ transform: 'scaleX(-1)' }}
             />
           )}
           
