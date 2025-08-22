@@ -109,36 +109,95 @@ const Index = () => {
   };
 
   const downloadVideo = async () => {
-    if (recordedVideo) {
-      try {
-        // Для iPhone используем более совместимый способ сохранения
-        const response = await fetch(recordedVideo);
-        const blob = await response.blob();
+    if (!recordedVideo) return;
+
+    try {
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      
+      // Определяем расширение файла по MIME типу
+      const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
+      const filename = `imperia_video_${new Date().getTime()}.${extension}`;
+      
+      // Проверяем, поддерживает ли браузер Web Share API (для мобильных устройств)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([blob], filename, { type: blob.type });
+          
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'IMPERIA PROMO Video',
+              text: 'Сохранить видео в галерею',
+              files: [file]
+            });
+            return;
+          }
+        } catch (shareError) {
+          console.log('Web Share API не сработал, используем fallback:', shareError);
+        }
+      }
+
+      // Fallback для iPhone Safari: используем объект URL и пользовательские действия
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      
+      if (isIOS || isSafari) {
+        // Для iOS создаём ссылку и показываем инструкцию
+        const videoUrl = URL.createObjectURL(blob);
         
-        // Определяем расширение файла по MIME типу
-        const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
-        const filename = `video_${new Date().getTime()}.${extension}`;
+        // Открываем видео в новой вкладке
+        const newWindow = window.open(videoUrl, '_blank');
         
-        // Создаём ссылку для скачивания
+        if (newWindow) {
+          // Показываем инструкцию пользователю
+          alert(
+            'Для сохранения видео на iPhone:\n\n' +
+            '1. Нажмите и удерживайте видео\n' +
+            '2. Выберите "Сохранить в Фото"\n' +
+            '3. Видео будет сохранено в галерею'
+          );
+        } else {
+          // Если popup заблокирован, используем прямое скачивание
+          throw new Error('Не удалось открыть видео для сохранения');
+        }
+        
+        // Очищаем URL через некоторое время
+        setTimeout(() => {
+          URL.revokeObjectURL(videoUrl);
+        }, 60000); // 1 минута на сохранение
+        
+      } else {
+        // Для других браузеров используем стандартное скачивание
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = filename;
         a.style.display = 'none';
         
-        // Добавляем в DOM, кликаем и удаляем
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         
-        // Очищаем URL объект
         setTimeout(() => {
           URL.revokeObjectURL(a.href);
         }, 100);
         
-        alert('Видео сохранено в галерею устройства!');
-      } catch (error) {
-        console.error('Ошибка сохранения видео:', error);
-        alert('Не удалось сохранить видео');
+        alert('Видео сохранено!');
+      }
+      
+    } catch (error) {
+      console.error('Ошибка сохранения видео:', error);
+      
+      // Показываем пользователю альтернативный способ
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        alert(
+          'Не удалось автоматически сохранить видео.\n\n' +
+          'Альтернативный способ:\n' +
+          '1. Воспроизведите видео на экране "Готово!"\n' +
+          '2. Нажмите и удерживайте видео\n' +
+          '3. Выберите "Сохранить в Фото"'
+        );
+      } else {
+        alert('Не удалось сохранить видео. Попробуйте ещё раз.');
       }
     }
   };
