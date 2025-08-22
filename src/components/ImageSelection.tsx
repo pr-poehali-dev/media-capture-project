@@ -25,12 +25,15 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
         </div>
 
         {selectedImage ? (
-          <div className="mb-6">
-            <img 
-              src={selectedImage} 
-              alt="Selected" 
-              className="w-full h-48 object-cover rounded-2xl shadow-md"
-            />
+          <div className="mb-6 relative">
+            <div className="relative rounded-2xl overflow-hidden">
+              <img 
+                src={selectedImage} 
+                alt="Selected" 
+                className="w-full h-48 object-cover rounded-2xl shadow-md"
+              />
+              <div className="absolute inset-0 rounded-2xl border-4 border-green-500 animate-pulse shadow-[0_0_20px_rgba(34,197,94,0.6),inset_0_0_20px_rgba(34,197,94,0.2)]"></div>
+            </div>
           </div>
         ) : (
           <div 
