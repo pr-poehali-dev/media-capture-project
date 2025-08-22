@@ -45,8 +45,7 @@ const VideoRecording = ({
       <div className="flex-1 p-4">
         <div className="h-full flex flex-col">
           <div className="text-center mb-4">
-            <h2 className="text-xl font-bold text-white mb-2">Запись видео</h2>
-            <p className="text-gray-300">Снимите короткое видео</p>
+            <h2 className="text-xl font-bold text-white mb-2">Контроль качества</h2>
           </div>
 
           <div className="relative flex-1 mb-4">
