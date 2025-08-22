@@ -41,8 +41,8 @@ const VideoRecording = ({
   const [isImageEnlarged, setIsImageEnlarged] = useState(false);
 
   const handleNotebookChange = (field: keyof NotebookData, value: string) => {
-    // Разрешить ввод только если запись активна или есть готовое видео
-    if (!isRecording && !recordedVideo) {
+    // Разрешить ввод только во время активной записи
+    if (!isRecording) {
       return;
     }
     
@@ -90,7 +90,7 @@ const VideoRecording = ({
 
       {/* Вторая часть - блокнот */}
       <div className="flex-1 p-2 lg:p-4">
-        <Card className={`h-full p-3 lg:p-6 ${!isRecording && !recordedVideo ? 'bg-gray-100' : 'bg-white'}`}>
+        <Card className={`h-full p-3 lg:p-6 ${!isRecording ? 'bg-gray-100' : 'bg-white'}`}>
           <div className="flex items-center mb-3 lg:mb-6">
             <Icon name="BookOpen" size={20} className="mr-2 text-blue-500 lg:w-6 lg:h-6" />
             <h3 className="text-lg lg:text-xl font-bold text-gray-800">Блокнот</h3>
@@ -106,9 +106,9 @@ const VideoRecording = ({
                 type="text"
                 value={notebookData.parentName}
                 onChange={(e) => handleNotebookChange('parentName', e.target.value)}
-                placeholder={!isRecording && !recordedVideo ? "Включите запись видео для ввода данных" : "Введите имя родителя"}
+                placeholder={!isRecording ? "Доступно только во время записи видео" : "Введите имя родителя"}
                 className="w-full h-10 lg:h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 text-sm lg:text-base"
-                disabled={!isRecording && !recordedVideo}
+                disabled={!isRecording}
               />
             </div>
             
@@ -121,9 +121,9 @@ const VideoRecording = ({
                 type="text"
                 value={notebookData.childName}
                 onChange={(e) => handleNotebookChange('childName', e.target.value)}
-                placeholder={!isRecording && !recordedVideo ? "Включите запись видео для ввода данных" : "Введите имя ребенка"}
+                placeholder={!isRecording ? "Доступно только во время записи видео" : "Введите имя ребенка"}
                 className="w-full h-10 lg:h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 text-sm lg:text-base"
-                disabled={!isRecording && !recordedVideo}
+                disabled={!isRecording}
               />
             </div>
             
@@ -136,9 +136,9 @@ const VideoRecording = ({
                 type="text"
                 value={notebookData.age}
                 onChange={(e) => handleNotebookChange('age', e.target.value)}
-                placeholder={!isRecording && !recordedVideo ? "Включите запись видео для ввода данных" : "Введите возраст"}
+                placeholder={!isRecording ? "Доступно только во время записи видео" : "Введите возраст"}
                 className="w-full h-10 lg:h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 text-sm lg:text-base"
-                disabled={!isRecording && !recordedVideo}
+                disabled={!isRecording}
               />
             </div>
           </div>
