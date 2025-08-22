@@ -121,20 +121,14 @@ export default {
 						backgroundPosition: '200% 0'
 					}
 				},
-				'fall': {
-					'0%': {
-						transform: 'translateY(-100vh) rotate(0deg)',
-						opacity: '0'
+				'breathe': {
+					'0%, 100%': {
+						transform: 'scale(1)',
+						filter: 'brightness(1) contrast(1) saturate(1.2)'
 					},
-					'10%': {
-						opacity: '1'
-					},
-					'90%': {
-						opacity: '1'
-					},
-					'100%': {
-						transform: 'translateY(100vh) rotate(360deg)',
-						opacity: '0'
+					'50%': {
+						transform: 'scale(1.02)',
+						filter: 'brightness(1.1) contrast(1.3) saturate(1.5)'
 					}
 				}
 			},
@@ -143,8 +137,7 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'shimmer': 'shimmer 2s ease-in-out infinite',
 				'shimmer-delayed': 'shimmer 2s ease-in-out 0.5s infinite',
-				'fall': 'fall 6s linear infinite',
-				'fall-slow': 'fall 8s linear infinite'
+				'breathe': 'breathe 4s ease-in-out infinite'
 			}
 		}
 	},
