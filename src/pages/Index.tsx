@@ -223,84 +223,100 @@ const Index = () => {
   );
 
   const renderVideoRecording = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-900">
-      <Card className="w-full max-w-md p-6 rounded-3xl shadow-lg bg-white">
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Запись видео</h2>
-          <p className="text-gray-600">Снимите короткое видео</p>
-        </div>
-
-        <div className="relative mb-6">
-          {recordedVideo ? (
-            <video 
-              src={recordedVideo} 
-              controls 
-              className="w-full h-64 object-cover rounded-2xl bg-black"
+    <div className="flex flex-col min-h-screen bg-gray-900">
+      {/* Верхняя часть - загруженная картинка */}
+      <div className="flex-1 bg-white p-4">
+        {selectedImage && (
+          <div className="h-full flex items-center justify-center">
+            <img 
+              src={selectedImage} 
+              alt="Selected" 
+              className="max-w-full max-h-full object-contain rounded-xl shadow-md"
             />
-          ) : (
-            <video 
-              ref={videoRef}
-              autoPlay 
-              playsInline
-              muted 
-              className="w-full h-64 object-cover rounded-2xl bg-black"
-              style={{ transform: 'scaleX(-1)' }}
-            />
-          )}
-          
-          {isRecording && (
-            <div className="absolute top-4 right-4 flex items-center bg-red-500 text-white px-3 py-1 rounded-full">
-              <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-              REC
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
 
-        <div className="flex gap-3 mb-4">
-          {!recordedVideo ? (
-            <>
-              <Button 
-                variant="outline" 
-                onClick={() => setCurrentStep(1)}
-                className="flex-1 h-12 rounded-xl"
-              >
-                Назад
-              </Button>
-              <Button 
-                onClick={isRecording ? stopVideoRecording : startVideoRecording}
-                className={`flex-1 h-12 rounded-xl ${
-                  isRecording 
-                    ? 'bg-red-500 hover:bg-red-600' 
-                    : 'bg-red-500 hover:bg-red-600'
-                } text-white`}
-              >
-                <Icon name={isRecording ? "Square" : "Circle"} size={20} className="mr-2" />
-                {isRecording ? 'Стоп' : 'Запись'}
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setRecordedVideo(null);
-                  setCurrentStep(2);
-                }}
-                className="flex-1 h-12 rounded-xl"
-              >
-                Пересъёмка
-              </Button>
-              <Button 
-                onClick={() => setCurrentStep(3)}
-                className="flex-1 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl"
-              >
-                Далее
-                <Icon name="ArrowRight" size={20} className="ml-1" />
-              </Button>
-            </>
-          )}
+      {/* Нижняя часть - запись видео */}
+      <div className="flex-1 p-4">
+        <div className="h-full flex flex-col">
+          <div className="text-center mb-4">
+            <h2 className="text-xl font-bold text-white mb-2">Запись видео</h2>
+            <p className="text-gray-300">Снимите короткое видео</p>
+          </div>
+
+          <div className="relative flex-1 mb-4">
+            {recordedVideo ? (
+              <video 
+                src={recordedVideo} 
+                controls 
+                className="w-full h-full object-cover rounded-2xl bg-black"
+              />
+            ) : (
+              <video 
+                ref={videoRef}
+                autoPlay 
+                playsInline
+                muted 
+                className="w-full h-full object-cover rounded-2xl bg-black"
+                style={{ transform: 'scaleX(-1)' }}
+              />
+            )}
+            
+            {isRecording && (
+              <div className="absolute top-4 right-4 flex items-center bg-red-500 text-white px-3 py-1 rounded-full">
+                <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+                REC
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            {!recordedVideo ? (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setCurrentStep(1)}
+                  className="flex-1 h-12 rounded-xl bg-white"
+                >
+                  Назад
+                </Button>
+                <Button 
+                  onClick={isRecording ? stopVideoRecording : startVideoRecording}
+                  className={`flex-1 h-12 rounded-xl ${
+                    isRecording 
+                      ? 'bg-red-500 hover:bg-red-600' 
+                      : 'bg-red-500 hover:bg-red-600'
+                  } text-white`}
+                >
+                  <Icon name={isRecording ? "Square" : "Circle"} size={20} className="mr-2" />
+                  {isRecording ? 'Стоп' : 'Запись'}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setRecordedVideo(null);
+                    setCurrentStep(2);
+                  }}
+                  className="flex-1 h-12 rounded-xl bg-white"
+                >
+                  Пересъёмка
+                </Button>
+                <Button 
+                  onClick={() => setCurrentStep(3)}
+                  className="flex-1 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl"
+                >
+                  Далее
+                  <Icon name="ArrowRight" size={20} className="ml-1" />
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 
