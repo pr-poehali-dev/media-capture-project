@@ -8,7 +8,7 @@ interface StartScreenProps {
 const StartScreen = ({ onStart }: StartScreenProps) => {
   return (
     <div 
-      className="flex flex-col justify-end min-h-screen p-6 bg-cover bg-center bg-no-repeat animate-pulse"
+      className="flex flex-col justify-end min-h-screen p-6 bg-cover bg-center bg-no-repeat animate-shimmer"
       style={{
         backgroundImage: `url('https://cdn.poehali.dev/files/0ccd0fdd-93aa-41f8-ad8d-66467510a595.jpeg')`,
         backgroundSize: 'contain'
