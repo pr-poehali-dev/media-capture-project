@@ -39,10 +39,18 @@ const VideoRecording = ({
   onNotebookDataChange
 }: VideoRecordingProps) => {
   const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+  const [showQualityBanner, setShowQualityBanner] = useState(false);
 
   const handleNotebookChange = (field: keyof NotebookData, value: string) => {
     const newData = { ...notebookData, [field]: value };
     onNotebookDataChange?.(newData);
+    
+    // Показать баннер, если пользователь начал вводить данные без записи видео
+    if (value.trim() && !isRecording && !recordedVideo) {
+      setShowQualityBanner(true);
+      // Автоматически скрыть через 5 секунд
+      setTimeout(() => setShowQualityBanner(false), 5000);
+    }
   };
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-900">
@@ -80,6 +88,31 @@ const VideoRecording = ({
               <Icon name="X" size={20} />
             </Button>
           </div>
+        </div>
+      )}
+
+      {/* Баннер контроля качества */}
+      {showQualityBanner && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top duration-300">
+          <Card className="bg-yellow-50 border-yellow-200 p-4 shadow-lg max-w-md">
+            <div className="flex items-center gap-3">
+              <div className="bg-yellow-100 rounded-full p-2">
+                <Icon name="AlertTriangle" size={20} className="text-yellow-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-yellow-800 mb-1">Включи контроль качества</h3>
+                <p className="text-sm text-yellow-700">Запиши видео для лучшего результата</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowQualityBanner(false)}
+                className="text-yellow-600 hover:text-yellow-800"
+              >
+                <Icon name="X" size={16} />
+              </Button>
+            </div>
+          </Card>
         </div>
       )}
 
