@@ -63,7 +63,7 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           <Button 
             onClick={onNext}
             disabled={!selectedImage}
-            className="flex-1 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl"
+            className="flex-1 h-12 bg-blue-university hover:bg-blue-600 text-white rounded-xl"
           >
             Далее
             <Icon name="ArrowRight" size={20} className="ml-1" />

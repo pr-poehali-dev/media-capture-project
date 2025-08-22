@@ -84,7 +84,7 @@ const AuthModal = ({ onLogin, onClose }: AuthModalProps) => {
             <Button
               type="submit"
               disabled={isLogging}
-              className="flex-1 h-12 bg-red-500 hover:bg-red-600 text-white rounded-xl"
+              className="flex-1 h-12 bg-blue-university hover:bg-blue-600 text-white rounded-xl"
             >
               {isLogging ? (
                 <>
