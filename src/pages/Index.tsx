@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import StartScreen from '@/components/StartScreen';
 import ImageSelection from '@/components/ImageSelection';
-import VideoRecording from '@/components/VideoRecording';
+import VideoRecording, { type NotebookData } from '@/components/VideoRecording';
 import SaveScreen from '@/components/SaveScreen';
 import AuthModal from '@/components/AuthModal';
 
@@ -19,6 +19,11 @@ const Index = () => {
   const [isUploadingToCloud, setIsUploadingToCloud] = useState(false);
   const [yandexUser, setYandexUser] = useState<YandexUser | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [notebookData, setNotebookData] = useState<NotebookData>({
+    parentName: '',
+    childName: '',
+    age: ''
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -325,6 +330,16 @@ const Index = () => {
       const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
       const filename = `imperia_video_${new Date().getTime()}.${extension}`;
       
+      // Формируем текст с данными блокнота
+      let shareText = 'Видео создано с помощью IMPERIA PROMO 🎬';
+      
+      if (notebookData.parentName || notebookData.childName || notebookData.age) {
+        shareText += '\n\nИнформация о ребенке:';
+        if (notebookData.parentName) shareText += `\n👤 Родитель: ${notebookData.parentName}`;
+        if (notebookData.childName) shareText += `\n👶 Ребенок: ${notebookData.childName}`;
+        if (notebookData.age) shareText += `\n🎂 Возраст: ${notebookData.age}`;
+      }
+      
       // Проверяем доступность Web Share API
       if (navigator.share && navigator.canShare) {
         try {
@@ -334,7 +349,7 @@ const Index = () => {
           if (navigator.canShare({ files: [file] })) {
             await navigator.share({
               title: 'IMPERIA PROMO Video',
-              text: 'Поделиться видео через Telegram',
+              text: shareText,
               files: [file]
             });
             return;
@@ -351,7 +366,7 @@ const Index = () => {
       
       if (isMobile) {
         // Для мобильных устройств используем Telegram URL схему
-        const telegramText = encodeURIComponent('Видео создано с помощью IMPERIA PROMO 🎬');
+        const telegramText = encodeURIComponent(shareText);
         
         // Сначала пробуем открыть Telegram через URL схему
         const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${telegramText}`;
@@ -444,6 +459,8 @@ const Index = () => {
         onStopRecording={stopVideoRecording}
         onRetake={handleRetake}
         videoRef={videoRef}
+        notebookData={notebookData}
+        onNotebookDataChange={setNotebookData}
       />
     ),
     () => (

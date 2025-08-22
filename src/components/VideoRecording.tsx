@@ -15,9 +15,11 @@ interface VideoRecordingProps {
   onStopRecording: () => void;
   onRetake: () => void;
   videoRef: React.RefObject<HTMLVideoElement>;
+  notebookData?: NotebookData;
+  onNotebookDataChange?: (data: NotebookData) => void;
 }
 
-interface NotebookData {
+export interface NotebookData {
   parentName: string;
   childName: string;
   age: string;
@@ -32,16 +34,15 @@ const VideoRecording = ({
   onStartRecording, 
   onStopRecording,
   onRetake,
-  videoRef 
+  videoRef,
+  notebookData = { parentName: '', childName: '', age: '' },
+  onNotebookDataChange
 }: VideoRecordingProps) => {
-  const [notebookData, setNotebookData] = useState<NotebookData>({
-    parentName: '',
-    childName: '',
-    age: ''
-  });
+  const [isImageEnlarged, setIsImageEnlarged] = useState(false);
 
   const handleNotebookChange = (field: keyof NotebookData, value: string) => {
-    setNotebookData(prev => ({ ...prev, [field]: value }));
+    const newData = { ...notebookData, [field]: value };
+    onNotebookDataChange?.(newData);
   };
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-900">
@@ -52,11 +53,35 @@ const VideoRecording = ({
             <img 
               src={selectedImage} 
               alt="Selected" 
-              className="max-w-full max-h-full object-contain rounded-xl shadow-md"
+              className="max-w-full max-h-full object-contain rounded-xl shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => setIsImageEnlarged(true)}
             />
           </div>
         )}
       </div>
+
+      {/* Модальное окно для увеличенной картинки */}
+      {isImageEnlarged && selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setIsImageEnlarged(false)}
+        >
+          <div className="relative max-w-[90vw] max-h-[90vh]">
+            <img 
+              src={selectedImage} 
+              alt="Enlarged" 
+              className="max-w-full max-h-full object-contain rounded-xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <Button
+              onClick={() => setIsImageEnlarged(false)}
+              className="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full w-10 h-10 p-0"
+            >
+              <Icon name="X" size={20} />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Вторая часть - запись видео */}
       <div className="flex-1 p-2 lg:p-4">
