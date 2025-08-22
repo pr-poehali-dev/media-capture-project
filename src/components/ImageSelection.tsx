@@ -20,8 +20,8 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-2xl flex items-center justify-center">
             <Icon name="Image" size={32} className="text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Выберите фото</h2>
-          <p className="text-gray-600">Загрузите изображение из галереи</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Выберите QR код</h2>
+
         </div>
 
         {selectedImage ? (
