@@ -88,12 +88,12 @@ const VideoRecording = ({
         </div>
       )}
 
-      {/* Вторая часть - блокнот */}
+      {/* Вторая часть - анкета */}
       <div className="flex-1 p-2 lg:p-4">
         <Card className={`h-full p-3 lg:p-6 ${!isRecording ? 'bg-gray-100' : 'bg-white'}`}>
           <div className="flex items-center mb-3 lg:mb-6">
             <Icon name="BookOpen" size={20} className="mr-2 text-blue-500 lg:w-6 lg:h-6" />
-            <h3 className="text-lg lg:text-xl font-bold text-gray-800">Блокнот</h3>
+            <h3 className="text-lg lg:text-xl font-bold text-gray-800">Анкета</h3>
           </div>
           
           <div className="space-y-3 lg:space-y-4">

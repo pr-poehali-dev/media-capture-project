@@ -23,7 +23,7 @@ export const useTelegramShare = () => {
       const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
       const filename = `imperia_video_${new Date().getTime()}.${extension}`;
       
-      // Формируем текст с данными блокнота и геолокацией
+      // Формируем текст с данными анкеты и геолокацией
       let shareText = 'Видео создано с помощью IMPERIA PROMO 🎬';
       
       if (notebookData.parentName || notebookData.childName || notebookData.age) {
