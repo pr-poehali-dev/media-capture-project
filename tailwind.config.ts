@@ -41,9 +41,9 @@ export default {
 					800: '#1e40af',
 					900: '#1e3a8a',
 					950: '#172554',
-					'university': '#4472ca',
-					'university-light': '#6b8dd6',
-					'university-dark': '#2d5aa0'
+					'university': '#010068',
+					'university-light': '#0000a0',
+					'university-dark': '#000040'
 				},
 				green: {
 					50: '#f0fdf4',
