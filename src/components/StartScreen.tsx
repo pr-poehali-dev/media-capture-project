@@ -14,23 +14,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         backgroundSize: 'contain'
       }}
     >
-      {/* Логотип с анимацией */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-6xl md:text-7xl font-bold text-green-500 relative overflow-hidden">
-            <span className="relative inline-block">
-              IMPERIA
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-60 animate-shine pointer-events-none"></div>
-            </span>
-          </h1>
-          <h2 className="text-4xl md:text-5xl font-bold text-green-500 relative mt-2 overflow-hidden">
-            <span className="relative inline-block">
-              PROMO
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-60 animate-shine pointer-events-none"></div>
-            </span>
-          </h2>
-        </div>
-      </div>
+
 
       {/* Кнопка */}
       <Button 
