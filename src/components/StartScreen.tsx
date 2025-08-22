@@ -14,9 +14,14 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         backgroundSize: 'contain'
       }}
     >
-      {/* Блестящий эффект shine поверх фонового изображения */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-40 animate-shine"></div>
+      {/* Блестящий эффект shine с режимом наложения */}
+      <div className="absolute inset-0 pointer-events-none mix-blend-overlay">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-80 animate-shine transform -skew-x-12"></div>
+      </div>
+      
+      {/* Дополнительный эффект свечения */}
+      <div className="absolute inset-0 pointer-events-none mix-blend-screen">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-300 to-transparent opacity-60 animate-shine transform -skew-x-12" style={{animationDelay: '0.5s'}}></div>
       </div>
       <Button 
         onClick={onStart}
