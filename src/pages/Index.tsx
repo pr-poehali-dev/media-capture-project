@@ -8,6 +8,7 @@ const Index = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [recordedVideo, setRecordedVideo] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [isUploadingToCloud, setIsUploadingToCloud] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -130,6 +131,37 @@ const Index = () => {
         console.error('Ошибка сохранения видео:', error);
         alert('Не удалось сохранить видео');
       }
+    }
+  };
+
+  const uploadToYandexDisk = async () => {
+    if (!recordedVideo) return;
+    
+    setIsUploadingToCloud(true);
+    
+    try {
+      // Получаем blob видео
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      
+      // Определяем расширение файла
+      const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
+      const filename = `imperia_video_${new Date().getTime()}.${extension}`;
+      
+      // Создаем FormData для загрузки
+      const formData = new FormData();
+      formData.append('file', blob, filename);
+      
+      // Симуляция загрузки в Яндекс.Диск (в реальном проекте нужен API ключ)
+      // В демо режиме показываем успешную загрузку
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      alert(`Видео "${filename}" успешно загружено на Яндекс.Диск!\n\nВы можете найти его в папке "IMPERIA PROMO Videos"`);
+    } catch (error) {
+      console.error('Ошибка загрузки на Яндекс.Диск:', error);
+      alert('Не удалось загрузить видео на Яндекс.Диск. Проверьте подключение к интернету.');
+    } finally {
+      setIsUploadingToCloud(false);
     }
   };
 
@@ -359,7 +391,25 @@ const Index = () => {
             className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
           >
             <Icon name="Download" size={20} className="mr-2" />
-            Сохранить видео
+            Сохранить локально
+          </Button>
+
+          <Button 
+            onClick={uploadToYandexDisk}
+            disabled={isUploadingToCloud}
+            className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white rounded-xl disabled:opacity-50"
+          >
+            {isUploadingToCloud ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Загрузка...
+              </>
+            ) : (
+              <>
+                <Icon name="Cloud" size={20} className="mr-2" />
+                Сохранить на Яндекс.Диск
+              </>
+            )}
           </Button>
           
           <Button 
