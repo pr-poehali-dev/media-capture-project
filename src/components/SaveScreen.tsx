@@ -15,6 +15,7 @@ interface SaveScreenProps {
   onDownloadVideo: () => Promise<void>;
   onUploadToYandex: () => Promise<void>;
   onLogoutFromYandex: () => void;
+  onShareToTelegram: () => Promise<void>;
   onReset: () => void;
 }
 
@@ -26,6 +27,7 @@ const SaveScreen = ({
   onDownloadVideo,
   onUploadToYandex,
   onLogoutFromYandex,
+  onShareToTelegram,
   onReset
 }: SaveScreenProps) => {
   return (
@@ -90,6 +92,14 @@ const SaveScreen = ({
           >
             <Icon name="Download" size={20} className="mr-2" />
             Сохранить локально
+          </Button>
+
+          <Button 
+            onClick={onShareToTelegram}
+            className="w-full h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl"
+          >
+            <Icon name="Send" size={20} className="mr-2" />
+            Отправить в Telegram
           </Button>
 
           <Button 
