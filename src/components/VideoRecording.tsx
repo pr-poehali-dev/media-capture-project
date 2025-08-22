@@ -88,8 +88,8 @@ const VideoRecording = ({
                   onClick={isRecording ? onStopRecording : onStartRecording}
                   className={`flex-1 h-12 rounded-xl ${
                     isRecording 
-                      ? 'bg-blue-university hover:bg-blue-600' 
-                      : 'bg-blue-university hover:bg-blue-600'
+                      ? 'bg-red-500 hover:bg-red-600' 
+                      : 'bg-red-500 hover:bg-red-600'
                   } text-white`}
                 >
                   <Icon name={isRecording ? "Square" : "Circle"} size={20} className="mr-2" />
@@ -107,7 +107,7 @@ const VideoRecording = ({
                 </Button>
                 <Button 
                   onClick={onNext}
-                  className="flex-1 h-12 bg-blue-university hover:bg-blue-600 text-white rounded-xl"
+                  className="flex-1 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl"
                 >
                   Далее
                   <Icon name="ArrowRight" size={20} className="ml-1" />

@@ -88,7 +88,7 @@ const SaveScreen = ({
         <div className="flex flex-col gap-3">
           <Button 
             onClick={onDownloadVideo}
-            className="w-full h-12 bg-blue-university hover:bg-blue-600 text-white rounded-xl"
+            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
           >
             <Icon name="Download" size={20} className="mr-2" />
             Сохранить локально
@@ -96,7 +96,7 @@ const SaveScreen = ({
 
           <Button 
             onClick={onShareToTelegram}
-            className="w-full h-12 bg-blue-university hover:bg-blue-600 text-white rounded-xl"
+            className="w-full h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl"
           >
             <Icon name="Send" size={20} className="mr-2" />
             Отправить в Telegram
@@ -105,7 +105,7 @@ const SaveScreen = ({
           <Button 
             onClick={onUploadToYandex}
             disabled={isUploadingToCloud}
-            className="w-full h-12 bg-blue-university hover:bg-blue-600 text-white rounded-xl disabled:opacity-50"
+            className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white rounded-xl disabled:opacity-50"
           >
             {isUploadingToCloud ? (
               <>
