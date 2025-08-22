@@ -24,6 +24,7 @@ const Index = () => {
     childName: '',
     age: ''
   });
+  const [location, setLocation] = useState<{ latitude: number; longitude: number; address?: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -40,8 +41,39 @@ const Index = () => {
     }
   };
 
+  const getLocationInfo = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          try {
+            // Получаем адрес через обратное геокодирование (OpenStreetMap Nominatim API)
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=ru`
+            );
+            const data = await response.json();
+            const address = data.display_name || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+            
+            setLocation({ latitude, longitude, address });
+          } catch (error) {
+            console.error('Ошибка получения адреса:', error);
+            setLocation({ latitude, longitude, address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}` });
+          }
+        },
+        (error) => {
+          console.error('Ошибка получения геолокации:', error);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+      );
+    }
+  };
+
   const startVideoRecording = async () => {
     try {
+      // Получаем геолокацию при начале записи
+      getLocationInfo();
+      
       // Улучшенные настройки для мобильных устройств и iPhone
       const constraints = {
         video: {
@@ -306,6 +338,7 @@ const Index = () => {
     setSelectedImage(null);
     setRecordedVideo(null);
     setIsRecording(false);
+    setLocation(null);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
@@ -315,6 +348,7 @@ const Index = () => {
 
   const handleRetake = () => {
     setRecordedVideo(null);
+    setLocation(null);
     setCurrentStep(2);
   };
 
@@ -330,7 +364,7 @@ const Index = () => {
       const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
       const filename = `imperia_video_${new Date().getTime()}.${extension}`;
       
-      // Формируем текст с данными блокнота
+      // Формируем текст с данными блокнота и геолокацией
       let shareText = 'Видео создано с помощью IMPERIA PROMO 🎬';
       
       if (notebookData.parentName || notebookData.childName || notebookData.age) {
@@ -338,6 +372,15 @@ const Index = () => {
         if (notebookData.parentName) shareText += `\n👤 Родитель: ${notebookData.parentName}`;
         if (notebookData.childName) shareText += `\n👶 Ребенок: ${notebookData.childName}`;
         if (notebookData.age) shareText += `\n🎂 Возраст: ${notebookData.age}`;
+      }
+      
+      if (location) {
+        shareText += '\n\n📍 Место съемки:';
+        if (location.address) {
+          shareText += `\n${location.address}`;
+        }
+        shareText += `\n📐 Координаты: ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
+        shareText += `\n🗺️ Карта: https://maps.google.com/maps?q=${location.latitude},${location.longitude}`;
       }
       
       // Проверяем доступность Web Share API
