@@ -19,12 +19,10 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         {Array.from({ length: 20 }, (_, i) => (
           <div
             key={i}
-            className="absolute animate-bounce text-2xl opacity-70"
+            className="absolute animate-fall text-2xl opacity-70"
             style={{
               left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${3 + Math.random() * 2}s`,
-              top: '-50px'
+              animationDelay: `${Math.random() * 3}s`
             }}
           >
             💰
@@ -33,12 +31,10 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         {Array.from({ length: 15 }, (_, i) => (
           <div
             key={`dollar-${i}`}
-            className="absolute animate-bounce text-xl opacity-60"
+            className="absolute animate-fall-slow text-xl opacity-60"
             style={{
               left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${4 + Math.random() * 2}s`,
-              top: '-30px'
+              animationDelay: `${Math.random() * 4}s`
             }}
           >
             💵

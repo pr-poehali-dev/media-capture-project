@@ -120,13 +120,31 @@ export default {
 					'100%': {
 						backgroundPosition: '200% 0'
 					}
+				},
+				'fall': {
+					'0%': {
+						transform: 'translateY(-100vh) rotate(0deg)',
+						opacity: '0'
+					},
+					'10%': {
+						opacity: '1'
+					},
+					'90%': {
+						opacity: '1'
+					},
+					'100%': {
+						transform: 'translateY(100vh) rotate(360deg)',
+						opacity: '0'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'shimmer': 'shimmer 2s ease-in-out infinite',
-				'shimmer-delayed': 'shimmer 2s ease-in-out 0.5s infinite'
+				'shimmer-delayed': 'shimmer 2s ease-in-out 0.5s infinite',
+				'fall': 'fall 6s linear infinite',
+				'fall-slow': 'fall 8s linear infinite'
 			}
 		}
 	},
