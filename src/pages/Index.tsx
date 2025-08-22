@@ -263,13 +263,15 @@ const Index = () => {
   };
 
   const resetApp = () => {
-    setCurrentStep(0);
+    // Очищаем все состояния в правильном порядке
     setSelectedImage(null);
     setRecordedVideo(null);
     setIsRecording(false);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
+    // Переходим на первый экран последним
+    setCurrentStep(0);
   };
 
   const handleRetake = () => {
