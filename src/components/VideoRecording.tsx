@@ -50,7 +50,7 @@ const VideoRecording = ({
     onNotebookDataChange?.(newData);
   };
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-blue-50">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-orange-50">
       <div className="max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 min-h-[calc(100vh-2rem)] lg:min-h-[calc(100vh-3rem)] p-4 lg:p-6">
           
@@ -61,7 +61,7 @@ const VideoRecording = ({
                 <div className="w-10 h-10 rounded-full bg-blue-university flex items-center justify-center mr-3">
                   <Icon name="QrCode" size={20} className="text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-university">QR-код</h3>
+                <h3 className="text-lg font-semibold text-orange-primary">QR-код</h3>
               </div>
               
               {selectedImage ? (
@@ -114,10 +114,10 @@ const VideoRecording = ({
                 <div className="w-10 h-10 rounded-full bg-blue-university flex items-center justify-center mr-3">
                   <Icon name="BookOpen" size={20} className="text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-university">Анкета</h3>
+                <h3 className="text-lg font-semibold text-orange-primary">Анкета</h3>
                 {!isRecording && (
                   <div className="ml-auto">
-                    <div className="flex items-center text-xs text-blue-university bg-blue-100 px-2 py-1 rounded-full">
+                    <div className="flex items-center text-xs text-orange-primary bg-orange-100 px-2 py-1 rounded-full">
                       <Icon name="Lock" size={12} className="mr-1" />
                       Заблокировано
                     </div>
@@ -171,27 +171,27 @@ const VideoRecording = ({
                   />
                 </div>
 
-                <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                  <h4 className="text-sm font-medium text-blue-university mb-2 flex items-center">
-                    <Icon name="FileText" size={16} className="mr-2 text-blue-university" />
+                <div className="mt-6 p-4 bg-orange-50 rounded-xl border border-orange-100">
+                  <h4 className="text-sm font-medium text-orange-primary mb-2 flex items-center">
+                    <Icon name="FileText" size={16} className="mr-2 text-orange-primary" />
                     Заметки
                   </h4>
                   <div className="text-sm text-gray-600 space-y-2">
                     {notebookData.parentName && (
                       <div className="flex items-center">
-                        <div className="w-2 h-2 bg-blue-university rounded-full mr-2"></div>
+                        <div className="w-2 h-2 bg-orange-primary rounded-full mr-2"></div>
                         <span><strong>Родитель:</strong> {notebookData.parentName}</span>
                       </div>
                     )}
                     {notebookData.childName && (
                       <div className="flex items-center">
-                        <div className="w-2 h-2 bg-blue-university rounded-full mr-2"></div>
+                        <div className="w-2 h-2 bg-orange-primary rounded-full mr-2"></div>
                         <span><strong>Ребенок:</strong> {notebookData.childName}</span>
                       </div>
                     )}
                     {notebookData.age && (
                       <div className="flex items-center">
-                        <div className="w-2 h-2 bg-blue-university rounded-full mr-2"></div>
+                        <div className="w-2 h-2 bg-orange-primary rounded-full mr-2"></div>
                         <span><strong>Возраст:</strong> {notebookData.age}</span>
                       </div>
                     )}
@@ -214,7 +214,7 @@ const VideoRecording = ({
                 <div className="w-10 h-10 rounded-full bg-blue-university flex items-center justify-center mr-3">
                   <Icon name="Video" size={20} className="text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-university">Контроль качества</h3>
+                <h3 className="text-lg font-semibold text-orange-primary">Контроль качества</h3>
                 {isRecording && (
                   <div className="ml-auto">
                     <div className="flex items-center text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full animate-pulse">
