@@ -63,10 +63,10 @@ const VideoRecording = ({
       {/* Модальное окно для увеличенной картинки */}
       {isImageEnlarged && selectedImage && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 animate-in fade-in duration-300"
           onClick={() => setIsImageEnlarged(false)}
         >
-          <div className="relative max-w-[90vw] max-h-[90vh]">
+          <div className="relative max-w-[90vw] max-h-[90vh] animate-in zoom-in-95 duration-300">
             <img 
               src={selectedImage} 
               alt="Enlarged" 
@@ -75,7 +75,7 @@ const VideoRecording = ({
             />
             <Button
               onClick={() => setIsImageEnlarged(false)}
-              className="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full w-10 h-10 p-0"
+              className="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full w-10 h-10 p-0 transition-all duration-200"
             >
               <Icon name="X" size={20} />
             </Button>
