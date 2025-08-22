@@ -63,7 +63,7 @@ const VideoRecording = ({
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-3">
                   <Icon name="Image" size={20} className="text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800">QR код</h3>
+                <h3 className="text-lg font-semibold text-gray-800">QR-код</h3>
               </div>
               
               {selectedImage ? (
@@ -79,7 +79,7 @@ const VideoRecording = ({
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center text-gray-500">
                     <Icon name="ImagePlus" size={48} className="mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">QR код не выбран</p>
+                    <p className="text-sm">QR-код не выбран</p>
                   </div>
                 </div>
               )}
