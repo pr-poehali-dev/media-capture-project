@@ -15,7 +15,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
 
 
   const handleStart = () => {
-    playClickSound();
+    playClickSound(); // Неблокирующий вызов звука
     onStart();
   };
 
