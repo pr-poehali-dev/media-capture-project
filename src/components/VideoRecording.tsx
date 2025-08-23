@@ -234,7 +234,9 @@ const VideoRecording = ({
                   <video 
                     src={recordedVideo} 
                     controls 
+                    playsInline
                     className="w-full h-full object-cover rounded-2xl bg-black"
+                    style={{ maxHeight: '70vh' }} // Ограничиваем высоту для мобильных
                   />
                 ) : (
                   <video 
@@ -243,7 +245,16 @@ const VideoRecording = ({
                     playsInline
                     muted 
                     className="w-full h-full object-cover rounded-2xl bg-black"
-                    style={{ transform: 'scaleX(-1)' }}
+                    style={{ 
+                      transform: 'scaleX(-1)',
+                      maxHeight: '70vh' // Ограничиваем высоту для мобильных
+                    }}
+                    onLoadedMetadata={() => {
+                      // Принудительное воспроизведение после загрузки
+                      if (videoRef.current) {
+                        videoRef.current.play().catch(e => console.log('Плаяоф полиси:', e));
+                      }
+                    }}
                   />
                 )}
                 

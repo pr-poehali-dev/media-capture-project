@@ -9,41 +9,71 @@ export const useVideoRecording = () => {
 
   const startVideoRecording = async () => {
     try {
-      // Улучшенные настройки для мобильных устройств и iPhone
-      const constraints = {
+      // Простые и надежные настройки для всех устройств
+      let constraints = {
         video: {
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          frameRate: { ideal: 30 },
+          width: { ideal: 720 },
+          height: { ideal: 480 },
+          frameRate: { ideal: 15, max: 30 },
           facingMode: 'environment'
         },
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
-        }
+        audio: true
       };
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (error) {
+        console.warn('Не удалось получить поток с идеальными настройками, пробуем упрощенные:', error);
+        // Fallback: минимальные настройки
+        constraints = {
+          video: { facingMode: 'environment' },
+          audio: true
+        };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      }
+      
       streamRef.current = stream;
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.playsInline = true; // Важно для iPhone
+        videoRef.current.playsInline = true;
         videoRef.current.muted = true;
-        // Принудительное воспроизведение
-        await videoRef.current.play();
+        
+        // Ждем загрузки метаданных перед воспроизведением
+        const playPromise = videoRef.current.play();
+        if (playPromise !== undefined) {
+          await playPromise.catch(e => {
+            console.warn('Автовоспроизведение заблокировано:', e);
+            // Это нормально для многих браузеров
+          });
+        }
       }
 
-      // Настройки MediaRecorder для лучшей совместимости с iPhone
-      let mimeType = 'video/webm';
-      if (MediaRecorder.isTypeSupported('video/mp4')) {
-        mimeType = 'video/mp4';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-        mimeType = 'video/webm;codecs=vp9';
+      // Определяем лучший поддерживаемый формат
+      let mimeType = '';
+      const possibleTypes = [
+        'video/webm;codecs=vp8,opus',
+        'video/webm;codecs=vp9,opus', 
+        'video/webm',
+        'video/mp4'
+      ];
+      
+      for (const type of possibleTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+          mimeType = type;
+          break;
+        }
+      }
+      
+      if (!mimeType) {
+        throw new Error('Ваше устройство не поддерживает запись видео в браузере');
       }
 
-      const mediaRecorder = new MediaRecorder(stream, { mimeType });
+      const mediaRecorder = new MediaRecorder(stream, { 
+        mimeType,
+        videoBitsPerSecond: 1000000 // 1 Mbps для экономии ресурсов
+      });
       mediaRecorderRef.current = mediaRecorder;
       
       const chunks: BlobPart[] = [];
@@ -66,18 +96,43 @@ export const useVideoRecording = () => {
         }
       };
 
-      mediaRecorder.start(1000); // Записываем чанки каждую секунду
+      mediaRecorder.start(2000); // Записываем чанки каждые 2 секунды для экономии ресурсов
       setIsRecording(true);
     } catch (error) {
       console.error('Ошибка доступа к камере:', error);
-      alert(`Не удалось получить доступ к камере: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
+      
+      // Дружелюбные сообщения для пользователей
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          alert('Для записи видео необходимо разрешить доступ к камере и микрофону в настройках браузера.');
+        } else if (error.name === 'NotFoundError') {
+          alert('Камера не найдена. Проверьте подключение камеры.');
+        } else if (error.name === 'NotSupportedError') {
+          alert('Ваш браузер не поддерживает запись видео. Попробуйте обновить браузер.');
+        } else {
+          alert(`Ошибка камеры: ${error.message}`);
+        }
+      } else {
+        alert('Неизвестная ошибка при доступе к камере. Попробуйте перезагрузить страницу.');
+      }
     }
   };
 
   const stopVideoRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
+      try {
+        if (mediaRecorderRef.current.state === 'recording') {
+          mediaRecorderRef.current.stop();
+        }
+        setIsRecording(false);
+      } catch (error) {
+        console.warn('Ошибка остановки записи:', error);
+        setIsRecording(false);
+        // В случае ошибки все равно пытаемся остановить поток
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+        }
+      }
     }
   };
 
@@ -178,8 +233,33 @@ export const useVideoRecording = () => {
   const resetRecording = () => {
     setRecordedVideo(null);
     setIsRecording(false);
+    
+    // Корректная очистка ресурсов
+    if (mediaRecorderRef.current) {
+      try {
+        if (mediaRecorderRef.current.state !== 'inactive') {
+          mediaRecorderRef.current.stop();
+        }
+      } catch (e) {
+        console.warn('Ошибка остановки MediaRecorder:', e);
+      }
+      mediaRecorderRef.current = null;
+    }
+    
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach(track => {
+        try {
+          track.stop();
+        } catch (e) {
+          console.warn('Ошибка остановки трека:', e);
+        }
+      });
+      streamRef.current = null;
+    }
+    
+    // Очистка видео элемента
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
     }
   };
 
