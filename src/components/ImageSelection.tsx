@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { useSound } from '@/hooks/useSound';
 
 
 
@@ -14,6 +15,7 @@ interface ImageSelectionProps {
 
 const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageSelectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { playClickSound } = useSound();
 
 
 
@@ -40,7 +42,7 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           </div>
         ) : (
           <div 
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => { playClickSound(); fileInputRef.current?.click(); }}
             className="w-full h-48 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university transition-colors mb-6"
           >
             <div className="text-center">
@@ -61,13 +63,13 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
         <div className="flex gap-3">
           <Button 
             variant="outline" 
-            onClick={onBack}
+            onClick={() => { playClickSound(); onBack(); }}
             className="flex-1 h-12 rounded-xl border-2 border-blue-500 text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 font-semibold transform hover:scale-105 transition-all duration-200"
           >
             Назад
           </Button>
           <Button 
-            onClick={onNext}
+            onClick={() => { playClickSound(); onNext(); }}
             disabled={!selectedImage}
             className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold"
           >
