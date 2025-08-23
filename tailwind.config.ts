@@ -130,6 +130,16 @@ export default {
 						transform: 'scale(1.02)',
 						filter: 'brightness(1.1) contrast(1.3) saturate(1.5)'
 					}
+				},
+				'pulse-button': {
+					'0%, 100%': {
+						transform: 'scale(1)',
+						boxShadow: '0 20px 25px -5px rgba(59, 130, 246, 0.4)'
+					},
+					'50%': {
+						transform: 'scale(1.05)',
+						boxShadow: '0 25px 50px -12px rgba(59, 130, 246, 0.6)'
+					}
 				}
 			},
 			animation: {
@@ -137,7 +147,8 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'shimmer': 'shimmer 2s ease-in-out infinite',
 				'shimmer-delayed': 'shimmer 2s ease-in-out 0.5s infinite',
-				'breathe': 'breathe 4s ease-in-out infinite'
+				'breathe': 'breathe 4s ease-in-out infinite',
+				'pulse-button': 'pulse-button 3s ease-in-out infinite'
 			}
 		}
 	},
