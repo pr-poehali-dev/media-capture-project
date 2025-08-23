@@ -41,7 +41,17 @@ const VideoRecording = ({
   onNotebookDataChange
 }: VideoRecordingProps) => {
   const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+  const [isLoadingCamera, setIsLoadingCamera] = useState(false);
   const { playClickSound } = useSound();
+  
+  const handleStartRecording = async () => {
+    setIsLoadingCamera(true);
+    try {
+      await onStartRecording();
+    } finally {
+      setIsLoadingCamera(false);
+    }
+  };
 
 
   const handleNotebookChange = (field: keyof NotebookData, value: string) => {
@@ -239,23 +249,35 @@ const VideoRecording = ({
                     style={{ maxHeight: '70vh' }} // Ограничиваем высоту для мобильных
                   />
                 ) : (
-                  <video 
-                    ref={videoRef}
-                    autoPlay 
-                    playsInline
-                    muted 
-                    className="w-full h-full object-cover rounded-2xl bg-black"
-                    style={{ 
-                      transform: 'scaleX(-1)',
-                      maxHeight: '70vh' // Ограничиваем высоту для мобильных
-                    }}
-                    onLoadedMetadata={() => {
-                      // Принудительное воспроизведение после загрузки
-                      if (videoRef.current) {
-                        videoRef.current.play().catch(e => console.log('Плаяоф полиси:', e));
-                      }
-                    }}
-                  />
+                  <div className="relative w-full h-full">
+                    <video 
+                      ref={videoRef}
+                      autoPlay 
+                      playsInline
+                      muted 
+                      className="w-full h-full object-cover rounded-2xl bg-black"
+                      style={{ 
+                        transform: 'scaleX(-1)',
+                        maxHeight: '70vh'
+                      }}
+                      onLoadedMetadata={() => {
+                        if (videoRef.current) {
+                          videoRef.current.play().catch(e => console.log('Автовоспроизведение заблокировано:', e));
+                        }
+                      }}
+                    />
+                    
+                    {/* Индикатор подключения камеры */}
+                    {isLoadingCamera && (
+                      <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center rounded-2xl">
+                        <div className="text-center text-white">
+                          <Icon name="Loader2" size={48} className="mx-auto mb-4 animate-spin" />
+                          <p className="text-lg font-medium">Подключаем камеру...</p>
+                          <p className="text-sm opacity-75 mt-2">Откройте консоль (F12) для отладки</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
                 
                 {isRecording && (
@@ -278,15 +300,30 @@ const VideoRecording = ({
                       Назад
                     </Button>
                     <Button 
-                      onClick={() => { playClickSound(); isRecording ? onStopRecording() : onStartRecording(); }}
+                      onClick={() => { 
+                        playClickSound(); 
+                        isRecording ? onStopRecording() : handleStartRecording(); 
+                      }}
+                      disabled={isLoadingCamera}
                       className={`h-12 rounded-xl ${
                         isRecording 
                           ? 'bg-red-500 hover:bg-red-600' 
+                          : isLoadingCamera
+                          ? 'bg-gray-400 cursor-not-allowed'
                           : 'bg-red-500 hover:bg-red-600'
                       } text-white`}
                     >
-                      <Icon name={isRecording ? "Square" : "Circle"} size={16} className="mr-2" />
-                      {isRecording ? 'Стоп' : 'Запись'}
+                      {isLoadingCamera ? (
+                        <>
+                          <Icon name="Loader2" size={16} className="mr-2 animate-spin" />
+                          Подключение...
+                        </>
+                      ) : (
+                        <>
+                          <Icon name={isRecording ? "Square" : "Circle"} size={16} className="mr-2" />
+                          {isRecording ? 'Стоп' : 'Запись'}
+                        </>
+                      )}
                     </Button>
                   </>
                 ) : (
