@@ -44,13 +44,37 @@ const Index = () => {
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Проверяем тип файла
+    if (!file.type.startsWith('image/')) {
+      alert('Пожалуйста, выберите изображение');
+      event.target.value = '';
+      return;
     }
+
+    // Проверяем размер файла (максимум 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      alert('Размер изображения слишком большой. Максимум 10MB');
+      event.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      if (result) {
+        setSelectedImage(result);
+      }
+    };
+    
+    reader.onerror = () => {
+      alert('Ошибка при чтении файла. Попробуйте другое изображение');
+      event.target.value = '';
+    };
+    
+    reader.readAsDataURL(file);
   };
 
   const startVideoRecording = async () => {
