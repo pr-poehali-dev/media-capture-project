@@ -57,7 +57,11 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
 
         <Button 
           onClick={handleStart}
-          className="w-full h-16 text-xl font-semibold bg-gradient-to-r from-slate-800 via-blue-900 to-purple-900 hover:from-slate-700 hover:via-blue-800 hover:to-purple-800 text-white rounded-2xl shadow-xl hover:scale-105 transition-all duration-200 border border-blue-500/20"
+          className="w-full h-16 text-xl font-semibold bg-gradient-to-r from-indigo-950 via-blue-800 to-cyan-700 hover:from-indigo-900 hover:via-blue-700 hover:to-cyan-600 text-white rounded-2xl shadow-xl hover:scale-105 transition-all duration-200"
+          style={{
+            background: 'linear-gradient(135deg, #1e1b4b 0%, #1e3a8a 30%, #0c4a6e 60%, #0891b2 100%)',
+            boxShadow: '0 10px 25px rgba(30, 27, 75, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+          }}
         >
           Новый лид
           <Icon name="ArrowRight" size={24} className="ml-2" />
