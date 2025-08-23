@@ -22,9 +22,10 @@ export const useSound = () => {
       oscillator.stop(audioContext.currentTime + duration);
     };
     
-    // Приятный звук клика - две быстрые ноты
-    createTone(800, 0.1, 0.05);
-    setTimeout(() => createTone(1000, 0.15, 0.03), 50);
+    // Мелодичный звук клика - арпеджио до-мажор
+    createTone(523, 0.15, 0.04); // До (C5)
+    setTimeout(() => createTone(659, 0.12, 0.03), 80); // Ми (E5)  
+    setTimeout(() => createTone(784, 0.18, 0.025), 140); // Соль (G5)
     
   }, []);
 

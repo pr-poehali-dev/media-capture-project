@@ -3,19 +3,10 @@ import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { useSound } from '@/hooks/useSound';
 
-interface YandexUser {
-  email: string;
-  name: string;
-}
-
 interface SaveScreenProps {
   selectedImage: string | null;
   recordedVideo: string | null;
-  yandexUser: YandexUser | null;
-  isUploadingToCloud: boolean;
   onDownloadVideo: () => Promise<void>;
-  onUploadToYandex: () => Promise<void>;
-  onLogoutFromYandex: () => void;
   onShareToTelegram: () => Promise<void>;
   onReset: () => void;
 }
@@ -23,11 +14,7 @@ interface SaveScreenProps {
 const SaveScreen = ({ 
   selectedImage, 
   recordedVideo, 
-  yandexUser, 
-  isUploadingToCloud,
   onDownloadVideo,
-  onUploadToYandex,
-  onLogoutFromYandex,
   onShareToTelegram,
   onReset
 }: SaveScreenProps) => {
@@ -65,28 +52,6 @@ const SaveScreen = ({
           </div>
         )}
 
-        {yandexUser && (
-          <div className="mb-4 p-3 bg-blue-50 rounded-xl border border-blue-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Icon name="User" size={16} className="text-blue-university mr-2" />
-                <div>
-                  <p className="text-sm font-medium text-blue-university">{yandexUser.name}</p>
-                  <p className="text-xs text-blue-600">{yandexUser.email}</p>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => { playClickSound(); onLogoutFromYandex(); }}
-                className="text-blue-university hover:text-blue-university-dark"
-              >
-                <Icon name="LogOut" size={16} />
-              </Button>
-            </div>
-          </div>
-        )}
-
         <div className="flex flex-col gap-3">
           <Button 
             onClick={() => { playClickSound(); onDownloadVideo(); }}
@@ -102,24 +67,6 @@ const SaveScreen = ({
           >
             <Icon name="Send" size={20} className="mr-2" />
             Отправить в Telegram
-          </Button>
-
-          <Button 
-            onClick={() => { playClickSound(); onUploadToYandex(); }}
-            disabled={isUploadingToCloud}
-            className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white rounded-xl disabled:opacity-50"
-          >
-            {isUploadingToCloud ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Загрузка...
-              </>
-            ) : (
-              <>
-                <Icon name="Cloud" size={20} className="mr-2" />
-                {yandexUser ? 'Сохранить на Яндекс.Диск' : 'Войти в Яндекс.Диск'}
-              </>
-            )}
           </Button>
           
           <Button 
