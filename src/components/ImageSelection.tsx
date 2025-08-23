@@ -2,9 +2,6 @@ import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import { useSound } from '@/hooks/useSound';
-
-
 
 interface ImageSelectionProps {
   selectedImage: string | null;
@@ -15,15 +12,12 @@ interface ImageSelectionProps {
 
 const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageSelectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { playClickSound } = useSound();
-
-
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6" style={{ backgroundColor: '#ffffff' }}>
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl border-0" style={{ backgroundColor: '#ffffff', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-50">
+      <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-blue-100">
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-2xl flex items-center justify-center">
             <Icon name="QrCode" size={32} className="text-blue-university" />
           </div>
           <h2 className="text-2xl font-bold text-blue-university mb-2">Выберите QR-код</h2>
@@ -42,7 +36,7 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           </div>
         ) : (
           <div 
-            onClick={() => { playClickSound(); fileInputRef.current?.click(); }}
+            onClick={() => fileInputRef.current?.click()}
             className="w-full h-48 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university transition-colors mb-6"
           >
             <div className="text-center">
@@ -63,15 +57,15 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
         <div className="flex gap-3">
           <Button 
             variant="outline" 
-            onClick={() => { playClickSound(); onBack(); }}
-            className="flex-1 h-12 rounded-xl border-2 border-blue-500 text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 font-semibold transform hover:scale-105 transition-all duration-200"
+            onClick={onBack}
+            className="flex-1 h-12 rounded-xl border-blue-university text-blue-university hover:bg-blue-50"
           >
             Назад
           </Button>
           <Button 
-            onClick={() => { playClickSound(); onNext(); }}
+            onClick={onNext}
             disabled={!selectedImage}
-            className="flex-1 h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold"
+            className="flex-1 h-12 bg-blue-university hover:bg-blue-university-dark text-white rounded-xl"
           >
             Далее
             <Icon name="ArrowRight" size={20} className="ml-1" />

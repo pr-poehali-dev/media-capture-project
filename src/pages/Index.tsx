@@ -3,11 +3,11 @@ import StartScreen from '@/components/StartScreen';
 import ImageSelection from '@/components/ImageSelection';
 import VideoRecording, { type NotebookData } from '@/components/VideoRecording';
 import SaveScreen from '@/components/SaveScreen';
-
+import AuthModal from '@/components/AuthModal';
 import { useVideoRecording } from '@/hooks/useVideoRecording';
 import { useLocation } from '@/hooks/useLocation';
 import { useTelegramShare } from '@/hooks/useTelegramShare';
-
+import { useYandexDisk } from '@/hooks/useYandexDisk';
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -40,7 +40,15 @@ const Index = () => {
     shareToTelegram
   } = useTelegramShare();
 
-
+  const {
+    yandexUser,
+    showAuthModal,
+    isUploadingToCloud,
+    setShowAuthModal,
+    loginToYandex,
+    logoutFromYandex,
+    uploadToYandexDisk
+  } = useYandexDisk();
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -79,7 +87,9 @@ const Index = () => {
     await shareToTelegram(recordedVideo, notebookData, location);
   };
 
-
+  const handleUploadToYandex = async () => {
+    await uploadToYandexDisk(recordedVideo);
+  };
 
   const screens = [
     () => <StartScreen onStart={() => setCurrentStep(1)} />,
@@ -110,7 +120,11 @@ const Index = () => {
       <SaveScreen 
         selectedImage={selectedImage}
         recordedVideo={recordedVideo}
+        yandexUser={yandexUser}
+        isUploadingToCloud={isUploadingToCloud}
         onDownloadVideo={downloadVideo}
+        onUploadToYandex={handleUploadToYandex}
+        onLogoutFromYandex={logoutFromYandex}
         onShareToTelegram={handleShareToTelegram}
         onReset={resetApp}
       />
@@ -120,7 +134,12 @@ const Index = () => {
   return (
     <>
       {screens[currentStep]()}
-
+      {showAuthModal && (
+        <AuthModal 
+          onLogin={loginToYandex}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
     </>
   );
 };

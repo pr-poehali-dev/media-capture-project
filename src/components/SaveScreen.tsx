@@ -1,14 +1,20 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import { useSound } from '@/hooks/useSound';
 
-
+interface YandexUser {
+  email: string;
+  name: string;
+}
 
 interface SaveScreenProps {
   selectedImage: string | null;
   recordedVideo: string | null;
+  yandexUser: YandexUser | null;
+  isUploadingToCloud: boolean;
   onDownloadVideo: () => Promise<void>;
+  onUploadToYandex: () => Promise<void>;
+  onLogoutFromYandex: () => void;
   onShareToTelegram: () => Promise<void>;
   onReset: () => void;
 }
@@ -16,13 +22,14 @@ interface SaveScreenProps {
 const SaveScreen = ({ 
   selectedImage, 
   recordedVideo, 
+  yandexUser, 
+  isUploadingToCloud,
   onDownloadVideo,
+  onUploadToYandex,
+  onLogoutFromYandex,
   onShareToTelegram,
   onReset
 }: SaveScreenProps) => {
-  const { playClickSound } = useSound();
-
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-50">
       <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
@@ -56,9 +63,31 @@ const SaveScreen = ({
           </div>
         )}
 
+        {yandexUser && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-xl border border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Icon name="User" size={16} className="text-blue-university mr-2" />
+                <div>
+                  <p className="text-sm font-medium text-blue-university">{yandexUser.name}</p>
+                  <p className="text-xs text-blue-600">{yandexUser.email}</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onLogoutFromYandex}
+                className="text-blue-university hover:text-blue-university-dark"
+              >
+                <Icon name="LogOut" size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col gap-3">
           <Button 
-            onClick={() => { playClickSound(); onDownloadVideo(); }}
+            onClick={onDownloadVideo}
             className="w-full h-12 bg-blue-university hover:bg-blue-university-dark text-white rounded-xl"
           >
             <Icon name="Download" size={20} className="mr-2" />
@@ -66,16 +95,34 @@ const SaveScreen = ({
           </Button>
 
           <Button 
-            onClick={() => { playClickSound(); onShareToTelegram(); }}
+            onClick={onShareToTelegram}
             className="w-full h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl"
           >
             <Icon name="Send" size={20} className="mr-2" />
             Отправить в Telegram
           </Button>
+
+          <Button 
+            onClick={onUploadToYandex}
+            disabled={isUploadingToCloud}
+            className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white rounded-xl disabled:opacity-50"
+          >
+            {isUploadingToCloud ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Загрузка...
+              </>
+            ) : (
+              <>
+                <Icon name="Cloud" size={20} className="mr-2" />
+                {yandexUser ? 'Сохранить на Яндекс.Диск' : 'Войти в Яндекс.Диск'}
+              </>
+            )}
+          </Button>
           
           <Button 
             variant="outline"
-            onClick={() => { playClickSound(); onReset(); }}
+            onClick={onReset}
             className="w-full h-12 rounded-xl border-blue-university text-blue-university hover:bg-blue-50"
           >
             Создать ещё
