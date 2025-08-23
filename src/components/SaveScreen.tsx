@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
+import { useSound } from '@/hooks/useSound';
 
 interface YandexUser {
   email: string;
@@ -30,6 +31,7 @@ const SaveScreen = ({
   onShareToTelegram,
   onReset
 }: SaveScreenProps) => {
+  const { playClickSound } = useSound();
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-50">
       <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
@@ -76,7 +78,7 @@ const SaveScreen = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={onLogoutFromYandex}
+                onClick={() => { playClickSound(); onLogoutFromYandex(); }}
                 className="text-blue-university hover:text-blue-university-dark"
               >
                 <Icon name="LogOut" size={16} />
@@ -87,7 +89,7 @@ const SaveScreen = ({
 
         <div className="flex flex-col gap-3">
           <Button 
-            onClick={onDownloadVideo}
+            onClick={() => { playClickSound(); onDownloadVideo(); }}
             className="w-full h-12 bg-blue-university hover:bg-blue-university-dark text-white rounded-xl"
           >
             <Icon name="Download" size={20} className="mr-2" />
@@ -95,7 +97,7 @@ const SaveScreen = ({
           </Button>
 
           <Button 
-            onClick={onShareToTelegram}
+            onClick={() => { playClickSound(); onShareToTelegram(); }}
             className="w-full h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl"
           >
             <Icon name="Send" size={20} className="mr-2" />
@@ -103,7 +105,7 @@ const SaveScreen = ({
           </Button>
 
           <Button 
-            onClick={onUploadToYandex}
+            onClick={() => { playClickSound(); onUploadToYandex(); }}
             disabled={isUploadingToCloud}
             className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white rounded-xl disabled:opacity-50"
           >
@@ -122,7 +124,7 @@ const SaveScreen = ({
           
           <Button 
             variant="outline"
-            onClick={onReset}
+            onClick={() => { playClickSound(); onReset(); }}
             className="w-full h-12 rounded-xl border-blue-university text-blue-university hover:bg-blue-50"
           >
             Создать ещё
