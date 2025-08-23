@@ -28,20 +28,24 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
               backgroundPosition: 'center'
             }}
           >
-            {/* Анимированные геометрические линии */}
+            {/* Анимированные извивающиеся линии */}
             <div className="absolute inset-0 pointer-events-none">
-              {/* Плавающие линии */}
-              <div className="absolute top-10 left-5 w-20 h-0.5 bg-white opacity-30 animate-float-line"></div>
-              <div className="absolute top-16 right-8 w-16 h-0.5 bg-blue-200 opacity-40 animate-drift-line"></div>
-              <div className="absolute bottom-20 left-10 w-24 h-0.5 bg-white opacity-25 animate-float-line" style={{ animationDelay: '1s' }}></div>
+              {/* Длинные плавающие линии */}
+              <div className="absolute top-8 left-2 w-40 h-1 bg-gradient-to-r from-white to-blue-200 opacity-30 animate-float-line rounded-full"></div>
+              <div className="absolute top-20 right-4 w-36 h-1 bg-gradient-to-l from-blue-300 to-transparent opacity-40 animate-drift-line rounded-full"></div>
+              <div className="absolute bottom-24 left-6 w-44 h-1 bg-gradient-to-r from-transparent via-white to-blue-100 opacity-25 animate-float-line rounded-full" style={{ animationDelay: '1s' }}></div>
               
-              {/* Вертикальные линии */}
-              <div className="absolute top-8 right-12 w-0.5 h-16 bg-blue-100 opacity-35 animate-drift-line" style={{ animationDelay: '2s' }}></div>
-              <div className="absolute bottom-16 left-16 w-0.5 h-20 bg-white opacity-30 animate-float-line" style={{ animationDelay: '3s' }}></div>
+              {/* Длинные вертикальные извивающиеся линии */}
+              <div className="absolute top-4 right-8 w-1 h-32 bg-gradient-to-b from-blue-200 to-white opacity-35 animate-drift-line rounded-full" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute bottom-8 left-12 w-1 h-36 bg-gradient-to-t from-white via-blue-100 to-transparent opacity-30 animate-float-line rounded-full" style={{ animationDelay: '3s' }}></div>
               
-              {/* Диагональные линии */}
-              <div className="absolute top-12 left-20 w-12 h-0.5 bg-blue-200 opacity-40 rotate-45 animate-drift-line" style={{ animationDelay: '1.5s' }}></div>
-              <div className="absolute bottom-24 right-16 w-14 h-0.5 bg-white opacity-35 -rotate-45 animate-float-line" style={{ animationDelay: '2.5s' }}></div>
+              {/* Длинные диагональные извивающиеся линии */}
+              <div className="absolute top-16 left-16 w-28 h-1 bg-gradient-to-r from-blue-300 via-white to-blue-200 opacity-40 animate-drift-line rounded-full" style={{ animationDelay: '1.5s' }}></div>
+              <div className="absolute bottom-32 right-12 w-32 h-1 bg-gradient-to-l from-white via-blue-100 to-transparent opacity-35 animate-float-line rounded-full" style={{ animationDelay: '2.5s' }}></div>
+              
+              {/* Дополнительные извивающиеся элементы */}
+              <div className="absolute top-32 left-20 w-24 h-1 bg-gradient-to-r from-transparent to-blue-200 opacity-20 animate-drift-line rounded-full" style={{ animationDelay: '4s' }}></div>
+              <div className="absolute bottom-16 right-20 w-28 h-1 bg-gradient-to-l from-white to-blue-300 opacity-30 animate-float-line rounded-full" style={{ animationDelay: '0.5s' }}></div>
             </div>
           </div>
         </div>
