@@ -148,7 +148,7 @@ export default {
 				'shimmer': 'shimmer 2s ease-in-out infinite',
 				'shimmer-delayed': 'shimmer 2s ease-in-out 0.5s infinite',
 				'breathe': 'breathe 4s ease-in-out infinite',
-				'pulse-button': 'pulse-button 4s ease-in-out infinite'
+				'pulse-button': 'pulse-button 8s ease-in-out infinite'
 			}
 		}
 	},
