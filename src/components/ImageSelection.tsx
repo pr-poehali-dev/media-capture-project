@@ -17,8 +17,9 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const { playClickSound } = useSound();
   const [showHelp, setShowHelp] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
-  const handleGalleryClick = useCallback(() => {
+  const handleGalleryClick = useCallback(async () => {
     playClickSound();
     
     // Проверяем поддержку File API
@@ -27,17 +28,74 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
       return;
     }
 
-    // Для мобильных устройств добавляем дополнительную задержку
-    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      setTimeout(() => {
+    try {
+      // Попытка использовать современный File System Access API (если доступен)
+      if ('showOpenFilePicker' in window) {
+        try {
+          const [fileHandle] = await (window as any).showOpenFilePicker({
+            types: [
+              {
+                description: 'Изображения',
+                accept: {
+                  'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']
+                }
+              }
+            ],
+            multiple: false
+          });
+          
+          const file = await fileHandle.getFile();
+          
+          // Создаем искусственное событие для совместимости с существующим кодом
+          const mockEvent = {
+            target: {
+              files: [file],
+              value: ''
+            }
+          } as React.ChangeEvent<HTMLInputElement>;
+          
+          handleFileChange(mockEvent);
+          return;
+        } catch (fsError: any) {
+          console.log('File System Access API failed, falling back to input:', fsError);
+          
+          // Если пользователь отменил диалог - ничего не делаем
+          if (fsError.name === 'AbortError') {
+            return;
+          }
+          
+          // Если ошибка доступа - показываем помощь
+          if (fsError.message && fsError.message.toLowerCase().includes('permission')) {
+            setShowHelp(true);
+            return;
+          }
+        }
+      }
+      
+      // Fallback к стандартному input
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        setTimeout(() => {
+          fileInputRef.current?.click();
+        }, 100);
+      } else {
         fileInputRef.current?.click();
-      }, 100);
-    } else {
+      }
+      
+    } catch (error: any) {
+      console.error('Error in handleGalleryClick:', error);
+      
+      // Проверяем, связана ли ошибка с разрешениями
+      if (error.message && error.message.toLowerCase().includes('permission')) {
+        setShowHelp(true);
+        return;
+      }
+      
+      // В случае любой другой ошибки - используем стандартный способ
       fileInputRef.current?.click();
     }
-  }, [playClickSound]);
+  }, [playClickSound, handleFileChange]);
 
   const handleCameraClick = useCallback(() => {
     playClickSound();
@@ -65,13 +123,66 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
       onImageSelect(event);
     } catch (error) {
       console.error('Ошибка при выборе файла:', error);
-      alert('Произошла ошибка при выборе файла. Попробуйте еще раз.');
+      
+      // Проверяем, не связана ли ошибка с разрешениями
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.toLowerCase().includes('permission') || 
+          errorMessage.toLowerCase().includes('разрешение')) {
+        alert('Нет разрешения на доступ к файлам. Попробуйте:\n1. Разрешить доступ в браузере\n2. Проверить настройки приложения\n3. Перезагрузить страницу');
+        setShowHelp(true);
+      } else {
+        alert('Произошла ошибка при выборе файла. Попробуйте еще раз.');
+      }
+      
       // Очищаем input для повторной попытки
       if (event.target) {
         event.target.value = '';
       }
     }
   }, [onImageSelect]);
+
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDragIn = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  }, []);
+
+  const handleDragOut = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      
+      // Проверяем тип файла
+      if (!file.type.startsWith('image/')) {
+        alert('Пожалуйста, выберите изображение');
+        return;
+      }
+      
+      // Создаем искусственное событие для совместимости
+      const mockEvent = {
+        target: {
+          files: [file],
+          value: ''
+        }
+      } as React.ChangeEvent<HTMLInputElement>;
+      
+      handleFileChange(mockEvent);
+    }
+  }, [handleFileChange]);
 
 
 
@@ -116,12 +227,26 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
             
             <div 
               onClick={handleGalleryClick}
-              className="w-full h-20 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university hover:bg-blue-50 transition-all"
+              onDragEnter={handleDragIn}
+              onDragLeave={handleDragOut}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              className={`w-full h-20 border-2 border-dashed rounded-2xl flex items-center justify-center cursor-pointer transition-all ${
+                dragActive 
+                  ? 'border-blue-university bg-blue-100 scale-105' 
+                  : 'border-blue-300 hover:border-blue-university hover:bg-blue-50'
+              }`}
             >
               <div className="flex items-center gap-3">
                 <Icon name="Image" size={24} className="text-blue-500" />
-                <span className="text-blue-600 font-medium">Выбрать из галереи</span>
+                <span className="text-blue-600 font-medium">
+                  {dragActive ? 'Отпустите изображение' : 'Выбрать из галереи'}
+                </span>
               </div>
+            </div>
+            
+            <div className="text-center text-xs text-blue-400 mt-2">
+              Или перетащите изображение сюда
             </div>
           </div>
         )}
@@ -131,7 +256,7 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
-          accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp"
+          accept="image/jpeg,image/jpg,image/png,image/gif,image/bmp,image/webp,image/*"
           className="hidden"
         />
         
@@ -140,7 +265,7 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           type="file"
           ref={cameraInputRef}
           onChange={handleFileChange}
-          accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp"
+          accept="image/jpeg,image/jpg,image/png,image/gif,image/bmp,image/webp,image/*"
           capture="environment"
           className="hidden"
         />

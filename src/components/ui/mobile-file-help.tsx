@@ -35,12 +35,21 @@ const MobileFileHelp = ({ isVisible, onClose }: MobileFileHelpProps) => {
           
           <div className="flex items-start gap-3">
             <Icon name="Settings" size={16} className="text-blue-500 mt-0.5" />
-            <p>Если не работает, проверьте разрешения камеры в настройках браузера</p>
+            <div>
+              <p><strong>Для Android:</strong></p>
+              <p className="text-xs mt-1">1. Разрешите доступ к файлам в браузере</p>
+              <p className="text-xs">2. Настройки → Приложения → Браузер → Разрешения</p>
+            </div>
+          </div>
+          
+          <div className="flex items-start gap-3">
+            <Icon name="Upload" size={16} className="text-blue-500 mt-0.5" />
+            <p>Можете попробовать перетащить изображение в область выбора</p>
           </div>
           
           <div className="flex items-start gap-3">
             <Icon name="RefreshCw" size={16} className="text-blue-500 mt-0.5" />
-            <p>Попробуйте перезагрузить страницу и попробовать снова</p>
+            <p>Перезагрузите страницу и разрешите доступ при первом запросе</p>
           </div>
         </div>
         
