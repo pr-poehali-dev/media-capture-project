@@ -29,21 +29,10 @@ export default {
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				blue: {
-					25: '#f8faff',
 					50: '#eff6ff',
-					100: '#dbeafe',
-					200: '#bfdbfe',
-					300: '#93c5fd',
-					400: '#60a5fa',
+					100: '#dbeafe', 
 					500: '#3b82f6',
-					600: '#2563eb',
-					700: '#1d4ed8',
-					800: '#1e40af',
-					900: '#1e3a8a',
-					950: '#172554',
-					'university': '#3d4a7a',
-					'university-light': '#5a6894',
-					'university-dark': '#2a3456'
+					600: '#2563eb'
 				},
 				green: {
 					50: '#f0fdf4',
@@ -55,7 +44,6 @@ export default {
 					500: '#ef4444',
 					600: '#dc2626'
 				},
-				silver: '#c0c0c0',
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
@@ -112,44 +100,11 @@ export default {
 					to: {
 						height: '0'
 					}
-				},
-				'shimmer': {
-					'0%': {
-						backgroundPosition: '-200% 0'
-					},
-					'100%': {
-						backgroundPosition: '200% 0'
-					}
-				},
-				'breathe': {
-					'0%, 100%': {
-						transform: 'scale(1)',
-						filter: 'brightness(1) contrast(1) saturate(1.2)'
-					},
-					'50%': {
-						transform: 'scale(1.02)',
-						filter: 'brightness(1.1) contrast(1.3) saturate(1.5)'
-					}
-				},
-				'glow-text': {
-					'0%': {
-						textShadow: '0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3), 0 0 15px rgba(59, 130, 246, 0.5)'
-					},
-					'100%': {
-						textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(59, 130, 246, 0.8)'
-					}
-				},
-
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'shimmer': 'shimmer 2s ease-in-out infinite',
-				'shimmer-delayed': 'shimmer 2s ease-in-out 0.5s infinite',
-				'breathe': 'breathe 4s ease-in-out infinite',
-				'glow-text': 'glow-text 2s ease-in-out infinite alternate',
-				'float-line': 'float-line 6s ease-in-out infinite',
-				'drift-line': 'drift-line 8s ease-in-out infinite'
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			}
 		}
 	},
