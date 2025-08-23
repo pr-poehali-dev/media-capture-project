@@ -3,6 +3,7 @@ import StartScreen from '@/components/StartScreen';
 import ImageSelection from '@/components/ImageSelection';
 import VideoRecording, { type NotebookData } from '@/components/VideoRecording';
 import SaveScreen from '@/components/SaveScreen';
+import SimpleCamera from '@/components/SimpleCamera';
 
 import { useVideoRecording } from '@/hooks/useVideoRecording';
 import { useLocation } from '@/hooks/useLocation';
@@ -144,7 +145,11 @@ const Index = () => {
   return (
     <>
       {screens[currentStep]()}
-
+      
+      {/* Простая камера для тестирования */}
+      <div className="fixed bottom-4 right-4">
+        <SimpleCamera />
+      </div>
     </>
   );
 };

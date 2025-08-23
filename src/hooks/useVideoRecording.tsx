@@ -9,93 +9,64 @@ export const useVideoRecording = () => {
 
   const startVideoRecording = async () => {
     try {
-      console.log('🚀 Начинаем запись видео...');
-      
-      // ПРОСТЕЙШИЕ настройки для максимальной совместимости
+      // УПРОЩЕННЫЕ настройки специально для Android
       const constraints = {
-        video: true,
+        video: {
+          facingMode: 'user',
+          width: { ideal: 640, max: 1280 },
+          height: { ideal: 480, max: 720 }
+        },
         audio: true
       };
 
-      console.log('📱 Запрашиваем доступ к камере...');
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('✅ Поток получен:', stream.getTracks().length, 'треков');
-      
       streamRef.current = stream;
       
       if (videoRef.current) {
-        console.log('🎥 Подключаем поток к видео элементу...');
         videoRef.current.srcObject = stream;
         videoRef.current.muted = true;
         videoRef.current.playsInline = true;
         
-        try {
-          await videoRef.current.play();
-          console.log('▶️ Видео запущено');
-        } catch (playError) {
-          console.warn('⚠️ Автовоспроизведение заблокировано:', playError);
-          // Это нормально для многих браузеров
-        }
+        // Принудительный запуск для Android
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.play().catch(() => {
+              // Тихо игнорируем ошибки автозапуска
+            });
+          }
+        }, 100);
       }
 
-      // Простейший MediaRecorder без сложных настроек
-      console.log('🔴 Создаем MediaRecorder...');
+      // Простейший MediaRecorder
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       
       const chunks: BlobPart[] = [];
       
       mediaRecorder.ondataavailable = (event) => {
-        console.log('📦 Получен чанк данных:', event.data.size, 'байт');
         if (event.data.size > 0) {
           chunks.push(event.data);
         }
       };
 
       mediaRecorder.onstop = () => {
-        console.log('🛑 Запись остановлена, обрабатываем данные...');
         const blob = new Blob(chunks, { type: 'video/webm' });
         const url = URL.createObjectURL(blob);
-        console.log('✅ Видео готово:', url);
         setRecordedVideo(url);
         
-        // Останавливаем поток
         if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => {
-            track.stop();
-            console.log('🔇 Трек остановлен:', track.kind);
-          });
+          streamRef.current.getTracks().forEach(track => track.stop());
         }
       };
 
-      mediaRecorder.onerror = (event) => {
-        console.error('❌ Ошибка MediaRecorder:', event);
-      };
-
-      console.log('🎬 Начинаем запись...');
       mediaRecorder.start();
       setIsRecording(true);
-      console.log('✅ Запись началась!');
       
     } catch (error) {
-      console.error('💥 Критическая ошибка:', error);
-      
-      // Показываем пользователю что именно произошло
-      if (error instanceof Error) {
-        console.log('Тип ошибки:', error.name);
-        console.log('Сообщение:', error.message);
-        
-        if (error.name === 'NotAllowedError') {
-          alert('❌ Доступ к камере запрещен.\n\n📱 Разрешите доступ к камере в настройках браузера и перезагрузите страницу.');
-        } else if (error.name === 'NotFoundError') {
-          alert('❌ Камера не найдена.\n\n📱 Проверьте подключение камеры.');
-        } else if (error.name === 'NotSupportedError') {
-          alert('❌ Ваш браузер не поддерживает запись видео.\n\n🔄 Попробуйте обновить браузер или использовать другой.');
-        } else {
-          alert(`❌ Ошибка камеры: ${error.message}\n\n🔄 Попробуйте перезагрузить страницу.`);
-        }
+      if (error instanceof Error && error.name === 'NotAllowedError') {
+        alert('🔒 Разрешите доступ к камере в настройках браузера');
       } else {
-        alert('❌ Неизвестная ошибка при доступе к камере.\n\n🔄 Перезагрузите страницу и попробуйте снова.');
+        alert('📱 Ошибка доступа к камере. Попробуйте перезагрузить страницу.');
       }
     }
   };
