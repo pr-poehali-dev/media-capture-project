@@ -282,19 +282,28 @@ const VideoRecording = ({
                       }}
                     />
                     
-                    {/* Кнопки управления камерой */}
-                    {!isRecording && isPreviewActive && (
+                    {/* Кнопки управления камерой - теперь работает и во время записи */}
+                    {isPreviewActive && (
                       <div className="absolute top-4 left-4 flex flex-col gap-2">
                         {/* Переключение камеры */}
                         {availableCameras.length > 1 && onSwitchCamera && (
                           <Button
                             onClick={() => { playClickSound(); onSwitchCamera(); }}
-                            className="bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full w-12 h-12 p-0"
-                            title={`Переключить на ${currentCamera === 'environment' ? 'фронтальную' : 'тыловую'} камеру`}
+                            className={`${
+                              isRecording 
+                                ? 'bg-red-600 bg-opacity-70 hover:bg-opacity-90' 
+                                : 'bg-black bg-opacity-50 hover:bg-opacity-75'
+                            } text-white rounded-full w-12 h-12 p-0 shadow-lg`}
+                            title={`Переключить на ${currentCamera === 'environment' ? 'фронтальную' : 'тыловую'} камеру${isRecording ? ' (создаст новое видео)' : ''}`}
                           >
                             <Icon name="RotateCcw" size={20} />
                           </Button>
                         )}
+                        
+                        {/* Индикатор текущей камеры */}
+                        <div className="bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full text-center">
+                          {currentCamera === 'environment' ? '📷 Тыл' : '🤳 Фронт'}
+                        </div>
                       </div>
                     )}
 

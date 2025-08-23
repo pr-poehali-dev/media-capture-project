@@ -16,7 +16,6 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -34,19 +33,12 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
     video.addEventListener('pause', handlePause);
     video.addEventListener('ended', handleEnded);
 
-    // Обработка полноэкранного режима
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-
     return () => {
       video.removeEventListener('timeupdate', updateTime);
       video.removeEventListener('loadedmetadata', updateDuration);
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
       video.removeEventListener('ended', handleEnded);
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
 
@@ -57,7 +49,7 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
     if (isPlaying) {
       video.pause();
     } else {
-      video.play();
+      video.play().catch(e => console.log('Playback error:', e));
     }
   };
 
@@ -93,22 +85,8 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
     }
   };
 
-  const toggleFullscreen = async () => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else {
-        await video.requestFullscreen();
-      }
-    } catch (error) {
-      console.warn('Ошибка полноэкранного режима:', error);
-    }
-  };
-
   const formatTime = (time: number) => {
+    if (isNaN(time)) return '0:00';
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -135,12 +113,13 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
           src={videoSrc}
           className="w-full h-auto max-h-[70vh] bg-black"
           playsInline
+          controls={false}
           onClick={togglePlay}
         />
         
-        {/* Оверлей с кнопками при наведении */}
-        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="flex items-center gap-4">
+        {/* Оверлей с кнопками */}
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
+          <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Button
               onClick={skipBackward}
               className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full w-12 h-12 p-0"
@@ -185,7 +164,7 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
             step="0.1"
             value={currentTime}
             onChange={handleSeek}
-            className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+            className="flex-1 h-2 bg-gray-700 rounded-lg cursor-pointer"
           />
           <span className="min-w-[40px]">{formatTime(duration)}</span>
         </div>
@@ -216,7 +195,7 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
                 step="0.1"
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
-                className="w-20 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                className="w-20 h-2 bg-gray-700 rounded-lg cursor-pointer"
               />
             </div>
           </div>
@@ -232,46 +211,9 @@ const VideoPlayer = ({ videoSrc, onClose, onDownload, className = '' }: VideoPla
                 <Icon name="Download" size={16} />
               </Button>
             )}
-
-            {/* Полный экран */}
-            <Button
-              onClick={toggleFullscreen}
-              className="bg-gray-700 hover:bg-gray-600 text-white rounded-full w-10 h-10 p-0"
-            >
-              <Icon name={isFullscreen ? "Minimize" : "Maximize"} size={16} />
-            </Button>
           </div>
         </div>
       </div>
-
-      {/* Стили для слайдеров */}
-      <style jsx>{`
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #3b82f6;
-          cursor: pointer;
-          border: 2px solid white;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .slider::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #3b82f6;
-          cursor: pointer;
-          border: 2px solid white;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .slider::-webkit-slider-track {
-          background: #374151;
-          border-radius: 4px;
-        }
-      `}</style>
     </div>
   );
 };

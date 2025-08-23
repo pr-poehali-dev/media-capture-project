@@ -65,27 +65,68 @@ export const useVideoRecording = () => {
     }
   };
 
-  // Переключение камеры
+  // Переключение камеры (теперь работает и во время записи!)
   const switchCamera = async () => {
-    if (isRecording) {
-      console.warn('⚠️ Нельзя переключать камеру во время записи');
-      return;
-    }
-    
     console.log('🔄 Переключаем камеру...');
+    
+    const wasRecording = isRecording;
     const newCamera = currentCamera === 'environment' ? 'user' : 'environment';
     
     try {
-      await startCameraPreview(newCamera);
+      // Если идет запись, предупреждаем пользователя
+      if (wasRecording) {
+        const confirmed = confirm('⚠️ Переключение камеры во время записи создаст новое видео. Продолжить?');
+        if (!confirmed) return;
+        
+        // Останавливаем текущую запись
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+          mediaRecorderRef.current.stop();
+          setIsRecording(false);
+        }
+      }
+      
+      // Переключаем камеру
+      const stream = await startCameraPreview(newCamera);
       console.log(`✅ Переключено на ${newCamera === 'environment' ? 'тыловую' : 'фронтальную'} камеру`);
+      
+      // Если была запись и пользователь согласился, сразу начинаем новую запись
+      if (wasRecording && stream) {
+        setTimeout(async () => {
+          try {
+            // Создаем новый MediaRecorder с новым потоком
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+            
+            const chunks: BlobPart[] = [];
+            
+            mediaRecorder.ondataavailable = (event) => {
+              if (event.data.size > 0) {
+                chunks.push(event.data);
+              }
+            };
+
+            mediaRecorder.onstop = () => {
+              const blob = new Blob(chunks, { type: 'video/webm' });
+              const url = URL.createObjectURL(blob);
+              setRecordedVideo(url);
+            };
+
+            mediaRecorder.onerror = (event) => {
+              console.error('❌ Ошибка MediaRecorder:', event);
+            };
+
+            mediaRecorder.start();
+            setIsRecording(true);
+            console.log('✅ Новая запись началась с другой камеры!');
+          } catch (recordError) {
+            console.error('❌ Ошибка возобновления записи:', recordError);
+          }
+        }, 500); // Небольшая задержка для стабилизации потока
+      }
+      
     } catch (error) {
       console.error('❌ Ошибка переключения камеры:', error);
-      // Возвращаемся к предыдущей камере
-      try {
-        await startCameraPreview(currentCamera);
-      } catch (fallbackError) {
-        console.error('❌ Не удалось вернуться к предыдущей камере:', fallbackError);
-      }
+      alert('❌ Не удалось переключить камеру. Попробуйте еще раз.');
     }
   };
 
