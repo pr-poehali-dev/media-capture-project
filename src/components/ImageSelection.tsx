@@ -14,10 +14,11 @@ interface ImageSelectionProps {
 
 const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageSelectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const { playClickSound } = useSound();
   const [showHelp, setShowHelp] = useState(false);
 
-  const handleFileClick = useCallback(() => {
+  const handleGalleryClick = useCallback(() => {
     playClickSound();
     
     // Проверяем поддержку File API
@@ -35,6 +36,27 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
       }, 100);
     } else {
       fileInputRef.current?.click();
+    }
+  }, [playClickSound]);
+
+  const handleCameraClick = useCallback(() => {
+    playClickSound();
+    
+    // Проверяем поддержку File API
+    if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+      alert('Ваш браузер не поддерживает загрузку файлов');
+      return;
+    }
+
+    // Для мобильных устройств добавляем дополнительную задержку
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      setTimeout(() => {
+        cameraInputRef.current?.click();
+      }, 100);
+    } else {
+      cameraInputRef.current?.click();
     }
   }, [playClickSound]);
 
@@ -81,21 +103,42 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
             </div>
           </div>
         ) : (
-          <div 
-            onClick={handleFileClick}
-            className="w-full h-48 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university transition-colors mb-6"
-          >
-            <div className="text-center">
-              <Icon name="Camera" size={32} className="text-blue-400 mx-auto mb-2" />
-              <p className="text-blue-500 font-medium">Выберите изображение</p>
-              <p className="text-blue-400 text-sm mt-1">Камера или галерея</p>
+          <div className="mb-6 space-y-4">
+            <div 
+              onClick={handleCameraClick}
+              className="w-full h-20 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university hover:bg-blue-50 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <Icon name="Camera" size={24} className="text-blue-500" />
+                <span className="text-blue-600 font-medium">Открыть камеру</span>
+              </div>
+            </div>
+            
+            <div 
+              onClick={handleGalleryClick}
+              className="w-full h-20 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university hover:bg-blue-50 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <Icon name="Image" size={24} className="text-blue-500" />
+                <span className="text-blue-600 font-medium">Выбрать из галереи</span>
+              </div>
             </div>
           </div>
         )}
 
+        {/* Input для галереи */}
         <input
           type="file"
           ref={fileInputRef}
+          onChange={handleFileChange}
+          accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp"
+          className="hidden"
+        />
+        
+        {/* Input для камеры */}
+        <input
+          type="file"
+          ref={cameraInputRef}
           onChange={handleFileChange}
           accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp"
           capture="environment"

@@ -25,12 +25,17 @@ const MobileFileHelp = ({ isVisible, onClose }: MobileFileHelpProps) => {
         <div className="space-y-3 text-sm text-gray-600">
           <div className="flex items-start gap-3">
             <Icon name="Camera" size={16} className="text-blue-500 mt-0.5" />
-            <p>При нажатии на кнопку выберите "Камера" или "Галерея"</p>
+            <p><strong>"Открыть камеру"</strong> — сделать новое фото</p>
+          </div>
+          
+          <div className="flex items-start gap-3">
+            <Icon name="Image" size={16} className="text-blue-500 mt-0.5" />
+            <p><strong>"Выбрать из галереи"</strong> — загрузить готовое фото</p>
           </div>
           
           <div className="flex items-start gap-3">
             <Icon name="Settings" size={16} className="text-blue-500 mt-0.5" />
-            <p>Если не работает, проверьте разрешения в настройках браузера</p>
+            <p>Если не работает, проверьте разрешения камеры в настройках браузера</p>
           </div>
           
           <div className="flex items-start gap-3">
