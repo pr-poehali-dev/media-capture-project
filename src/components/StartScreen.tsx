@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import { useSound } from '@/hooks/useSound';
+
 
 
 interface StartScreenProps {
@@ -9,11 +9,10 @@ interface StartScreenProps {
 }
 
 const StartScreen = ({ onStart }: StartScreenProps) => {
-  const { playClickSound } = useSound();
+
 
 
   const handleStart = () => {
-    playClickSound();
     onStart();
   };
 
