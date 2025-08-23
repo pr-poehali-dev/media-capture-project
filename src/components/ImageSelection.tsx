@@ -17,32 +17,121 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const { playClickSound } = useSound();
   const [showHelp, setShowHelp] = useState(false);
+  const [checkingPermissions, setCheckingPermissions] = useState(false);
 
-  const handleGalleryClick = useCallback(() => {
+  const requestPermissions = useCallback(async () => {
+    // Проверяем, что это Android
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    if (!isAndroid) return true;
+    
+    setCheckingPermissions(true);
+    
+    try {
+      // Запрашиваем разрешения через современные API
+      if ('permissions' in navigator && 'query' in navigator.permissions) {
+        try {
+          // Проверяем разрешение на камеру (часто связано с медиафайлами)
+          const cameraPermission = await navigator.permissions.query({ name: 'camera' as PermissionName });
+          
+          if (cameraPermission.state === 'denied') {
+            alert('Для работы с изображениями необходимо разрешение на доступ к камере и файлам.\nПожалуйста, разрешите доступ в настройках браузера.');
+            setShowHelp(true);
+            return false;
+          }
+        } catch (permError) {
+          console.log('Permission query failed:', permError);
+        }
+      }
+      
+      // Пытаемся получить доступ к медиа для проверки разрешений
+      if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+        try {
+          // Запрашиваем минимальный доступ к камере для проверки разрешений
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: 1, height: 1 },
+            audio: false 
+          });
+          // Сразу останавливаем поток
+          stream.getTracks().forEach(track => track.stop());
+          return true;
+        } catch (mediaError: any) {
+          if (mediaError.name === 'NotAllowedError' || mediaError.name === 'PermissionDeniedError') {
+            alert('Доступ к камере и файлам заблокирован.\nРазрешите доступ для загрузки изображений.');
+            setShowHelp(true);
+            return false;
+          }
+          // Если ошибка не связана с разрешениями - продолжаем
+          console.log('Media error (not permission related):', mediaError);
+          return true;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.log('Permission check failed:', error);
+      return true; // Продолжаем в случае ошибки проверки
+    } finally {
+      setCheckingPermissions(false);
+    }
+  }, [setShowHelp]);
+
+  const handleGalleryClick = useCallback(async () => {
     playClickSound();
+    
+    // Запрашиваем разрешения для Android
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) {
+      return; // Прерываем выполнение, если нет разрешений
+    }
+    
     setTimeout(() => {
       fileInputRef.current?.click();
     }, 100);
-  }, [playClickSound]);
+  }, [playClickSound, requestPermissions]);
 
-  const handleCameraClick = useCallback(() => {
+  const handleCameraClick = useCallback(async () => {
     playClickSound();
+    
+    // Запрашиваем разрешения для Android (особенно важно для камеры)
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) {
+      return; // Прерываем выполнение, если нет разрешений
+    }
+    
     setTimeout(() => {
       cameraInputRef.current?.click();
     }, 100);
-  }, [playClickSound]);
+  }, [playClickSound, requestPermissions]);
 
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       onImageSelect(event);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Ошибка при выборе файла:', error);
-      alert('Произошла ошибка при выборе файла. Попробуйте еще раз.');
+      
+      // Проверяем, связана ли ошибка с разрешениями на Android
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const errorMessage = error?.message || String(error);
+      
+      if (isAndroid && (errorMessage.toLowerCase().includes('permission') || 
+                        errorMessage.toLowerCase().includes('разрешение') ||
+                        errorMessage.toLowerCase().includes('denied'))) {
+        alert('Нет разрешения на доступ к файлам.\n\n' +
+              'Для Android:\n' +
+              '1. Разрешите доступ в всплывающем окне\n' +
+              '2. Проверьте настройки браузера\n' +
+              '3. Перезагрузите страницу и повторите попытку');
+        setShowHelp(true);
+      } else {
+        alert('Произошла ошибка при выборе файла. Попробуйте еще раз.');
+      }
+      
       if (event.target) {
         event.target.value = '';
       }
     }
-  }, [onImageSelect]);
+  }, [onImageSelect, setShowHelp]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6" style={{ backgroundColor: '#ffffff' }}>
@@ -75,21 +164,33 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           <div className="mb-6 space-y-4">
             <div 
               onClick={handleCameraClick}
-              className="w-full h-20 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university hover:bg-blue-50 transition-all"
+              className={`w-full h-20 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university hover:bg-blue-50 transition-all ${checkingPermissions ? 'opacity-50 cursor-wait' : ''}`}
             >
               <div className="flex items-center gap-3">
-                <Icon name="Camera" size={24} className="text-blue-500" />
-                <span className="text-blue-600 font-medium">Открыть камеру</span>
+                {checkingPermissions ? (
+                  <Icon name="Loader2" size={24} className="text-blue-500 animate-spin" />
+                ) : (
+                  <Icon name="Camera" size={24} className="text-blue-500" />
+                )}
+                <span className="text-blue-600 font-medium">
+                  {checkingPermissions ? 'Проверка разрешений...' : 'Открыть камеру'}
+                </span>
               </div>
             </div>
             
             <div 
               onClick={handleGalleryClick}
-              className="w-full h-20 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university hover:bg-blue-50 transition-all"
+              className={`w-full h-20 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university hover:bg-blue-50 transition-all ${checkingPermissions ? 'opacity-50 cursor-wait' : ''}`}
             >
               <div className="flex items-center gap-3">
-                <Icon name="Image" size={24} className="text-blue-500" />
-                <span className="text-blue-600 font-medium">Выбрать из галереи</span>
+                {checkingPermissions ? (
+                  <Icon name="Loader2" size={24} className="text-blue-500 animate-spin" />
+                ) : (
+                  <Icon name="Image" size={24} className="text-blue-500" />
+                )}
+                <span className="text-blue-600 font-medium">
+                  {checkingPermissions ? 'Проверка разрешений...' : 'Выбрать из галереи'}
+                </span>
               </div>
             </div>
           </div>

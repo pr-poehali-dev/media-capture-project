@@ -13,7 +13,9 @@ const MobileFileHelp = ({ isVisible, onClose }: MobileFileHelpProps) => {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-sm bg-white rounded-2xl p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold text-blue-900">Помощь с загрузкой</h3>
+          <h3 className="font-semibold text-blue-900">
+            Разрешения Android
+          </h3>
           <button 
             onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-100"
