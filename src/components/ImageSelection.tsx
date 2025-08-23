@@ -14,14 +14,13 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-50">
       <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-2xl flex items-center justify-center">
-            <Icon name="Image" size={32} className="text-green-600" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-2xl flex items-center justify-center">
+            <Icon name="QrCode" size={32} className="text-blue-university" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Выберите QR код</h2>
-
+          <h2 className="text-2xl font-bold text-blue-university mb-2">Выберите QR-код</h2>
         </div>
 
         {selectedImage ? (
@@ -32,17 +31,17 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
                 alt="Selected" 
                 className="w-full h-48 object-cover rounded-2xl shadow-md"
               />
-              <div className="absolute inset-0 rounded-2xl border-4 border-green-500 animate-pulse shadow-[0_0_20px_rgba(34,197,94,0.6),inset_0_0_20px_rgba(34,197,94,0.2)]"></div>
+              <div className="absolute inset-0 rounded-2xl border-4 border-blue-university animate-pulse"></div>
             </div>
           </div>
         ) : (
           <div 
             onClick={() => fileInputRef.current?.click()}
-            className="w-full h-48 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-green-400 transition-colors mb-6"
+            className="w-full h-48 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university transition-colors mb-6"
           >
             <div className="text-center">
-              <Icon name="Plus" size={32} className="text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-500">Нажмите для выбора</p>
+              <Icon name="Plus" size={32} className="text-blue-400 mx-auto mb-2" />
+              <p className="text-blue-500">Нажмите для выбора</p>
             </div>
           </div>
         )}
@@ -59,14 +58,14 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           <Button 
             variant="outline" 
             onClick={onBack}
-            className="flex-1 h-12 rounded-xl"
+            className="flex-1 h-12 rounded-xl border-blue-university text-blue-university hover:bg-blue-50"
           >
             Назад
           </Button>
           <Button 
             onClick={onNext}
             disabled={!selectedImage}
-            className="flex-1 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl"
+            className="flex-1 h-12 bg-blue-university hover:bg-blue-university-dark text-white rounded-xl"
           >
             Далее
             <Icon name="ArrowRight" size={20} className="ml-1" />

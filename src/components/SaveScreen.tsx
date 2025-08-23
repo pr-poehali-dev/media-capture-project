@@ -31,19 +31,19 @@ const SaveScreen = ({
   onReset
 }: SaveScreenProps) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-green-50 to-blue-50">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-50">
       <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
         <div className="text-center mb-8">
           <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-2xl flex items-center justify-center">
             <Icon name="CheckCircle" size={32} className="text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Готово!</h2>
-          <p className="text-gray-600">Ваше видео готово к сохранению</p>
+          <h2 className="text-2xl font-bold text-blue-university mb-2">Готово!</h2>
+          <p className="text-blue-600">Ваше видео готово к сохранению</p>
         </div>
 
         {selectedImage && (
           <div className="mb-4">
-            <p className="text-sm text-gray-500 mb-2">Выбранное фото:</p>
+            <p className="text-sm text-blue-500 mb-2">QR-код:</p>
             <img 
               src={selectedImage} 
               alt="Selected" 
@@ -54,7 +54,7 @@ const SaveScreen = ({
 
         {recordedVideo && (
           <div className="mb-6">
-            <p className="text-sm text-gray-500 mb-2">Записанное видео:</p>
+            <p className="text-sm text-blue-500 mb-2">Записанное видео:</p>
             <video 
               src={recordedVideo} 
               controls 
@@ -64,20 +64,20 @@ const SaveScreen = ({
         )}
 
         {yandexUser && (
-          <div className="mb-4 p-3 bg-green-50 rounded-xl border border-green-200">
+          <div className="mb-4 p-3 bg-blue-50 rounded-xl border border-blue-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <Icon name="User" size={16} className="text-green-600 mr-2" />
+                <Icon name="User" size={16} className="text-blue-university mr-2" />
                 <div>
-                  <p className="text-sm font-medium text-green-800">{yandexUser.name}</p>
-                  <p className="text-xs text-green-600">{yandexUser.email}</p>
+                  <p className="text-sm font-medium text-blue-university">{yandexUser.name}</p>
+                  <p className="text-xs text-blue-600">{yandexUser.email}</p>
                 </div>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onLogoutFromYandex}
-                className="text-green-600 hover:text-green-800"
+                className="text-blue-university hover:text-blue-university-dark"
               >
                 <Icon name="LogOut" size={16} />
               </Button>
@@ -88,7 +88,7 @@ const SaveScreen = ({
         <div className="flex flex-col gap-3">
           <Button 
             onClick={onDownloadVideo}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
+            className="w-full h-12 bg-blue-university hover:bg-blue-university-dark text-white rounded-xl"
           >
             <Icon name="Download" size={20} className="mr-2" />
             Сохранить локально
@@ -123,7 +123,7 @@ const SaveScreen = ({
           <Button 
             variant="outline"
             onClick={onReset}
-            className="w-full h-12 rounded-xl"
+            className="w-full h-12 rounded-xl border-blue-university text-blue-university hover:bg-blue-50"
           >
             Создать ещё
           </Button>
