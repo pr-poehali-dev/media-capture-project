@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import StartScreen from '@/components/StartScreen';
 import ImageSelection from '@/components/ImageSelection';
 import VideoRecording, { type NotebookData } from '@/components/VideoRecording';
@@ -45,11 +45,6 @@ const Index = () => {
   const {
     shareToTelegram
   } = useTelegramShare();
-
-  // Инициализируем список камер при загрузке
-  useEffect(() => {
-    getAvailableCameras().catch(e => console.log('Не удалось получить список камер:', e));
-  }, [getAvailableCameras]);
 
 
 
