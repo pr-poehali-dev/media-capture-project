@@ -1,10 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { useSound } from '@/hooks/useSound';
-
-
+import MobileFileHelp from '@/components/ui/mobile-file-help';
 
 interface ImageSelectionProps {
   selectedImage: string | null;
@@ -16,6 +15,41 @@ interface ImageSelectionProps {
 const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageSelectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { playClickSound } = useSound();
+  const [showHelp, setShowHelp] = useState(false);
+
+  const handleFileClick = useCallback(() => {
+    playClickSound();
+    
+    // Проверяем поддержку File API
+    if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+      alert('Ваш браузер не поддерживает загрузку файлов');
+      return;
+    }
+
+    // Для мобильных устройств добавляем дополнительную задержку
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      setTimeout(() => {
+        fileInputRef.current?.click();
+      }, 100);
+    } else {
+      fileInputRef.current?.click();
+    }
+  }, [playClickSound]);
+
+  const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      onImageSelect(event);
+    } catch (error) {
+      console.error('Ошибка при выборе файла:', error);
+      alert('Произошла ошибка при выборе файла. Попробуйте еще раз.');
+      // Очищаем input для повторной попытки
+      if (event.target) {
+        event.target.value = '';
+      }
+    }
+  }, [onImageSelect]);
 
 
 
@@ -27,6 +61,12 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
             <Icon name="QrCode" size={32} className="text-blue-university" />
           </div>
           <h2 className="text-2xl font-bold text-blue-university mb-2">Выберите QR-код</h2>
+          <button
+            onClick={() => setShowHelp(true)}
+            className="text-blue-400 text-sm underline hover:text-blue-600"
+          >
+            Не работает? Нужна помощь
+          </button>
         </div>
 
         {selectedImage ? (
@@ -42,12 +82,13 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           </div>
         ) : (
           <div 
-            onClick={() => { playClickSound(); fileInputRef.current?.click(); }}
+            onClick={handleFileClick}
             className="w-full h-48 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university transition-colors mb-6"
           >
             <div className="text-center">
-              <Icon name="Plus" size={32} className="text-blue-400 mx-auto mb-2" />
-              <p className="text-blue-500">Нажмите для выбора</p>
+              <Icon name="Camera" size={32} className="text-blue-400 mx-auto mb-2" />
+              <p className="text-blue-500 font-medium">Выберите изображение</p>
+              <p className="text-blue-400 text-sm mt-1">Камера или галерея</p>
             </div>
           </div>
         )}
@@ -55,8 +96,9 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
         <input
           type="file"
           ref={fileInputRef}
-          onChange={onImageSelect}
-          accept="image/*"
+          onChange={handleFileChange}
+          accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp"
+          capture="environment"
           className="hidden"
         />
 
@@ -78,6 +120,11 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           </Button>
         </div>
       </Card>
+      
+      <MobileFileHelp 
+        isVisible={showHelp} 
+        onClose={() => setShowHelp(false)} 
+      />
     </div>
   );
 };
