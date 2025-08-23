@@ -131,20 +131,7 @@ export default {
 						filter: 'brightness(1.1) contrast(1.3) saturate(1.5)'
 					}
 				},
-				'float': {
-					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' }
-				},
-				'glow': {
-					'0%, 100%': { 
-						opacity: '0.4',
-						transform: 'scale(1)'
-					},
-					'50%': { 
-						opacity: '0.8',
-						transform: 'scale(1.1)'
-					}
-				}
+
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
