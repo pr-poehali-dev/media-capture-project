@@ -17,9 +17,9 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-50">
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
+      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-white border-0" style={{ backgroundColor: '#ffffff', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-2xl flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-blue-100">
             <Icon name="Rocket" size={32} className="text-blue-university" />
           </div>
           <h2 className="text-2xl font-bold text-blue-university mb-2">Добро пожаловать!</h2>
@@ -41,7 +41,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
 
         <Button 
           onClick={handleStart}
-          className="w-full h-16 text-xl font-semibold bg-blue-university hover:bg-blue-university-dark text-white rounded-2xl shadow-lg"
+          className="w-full h-16 text-xl font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-200"
         >
           Новый лид
           <Icon name="ArrowRight" size={24} className="ml-2" />
