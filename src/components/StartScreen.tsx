@@ -34,10 +34,6 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         <Button 
           onClick={handleStart}
           className="w-full h-16 text-xl font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl shadow-xl hover:scale-105 transition-all duration-200"
-          style={{
-            textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4)',
-            animation: 'glow-text 2s ease-in-out infinite alternate'
-          }}
         >
           Новый лид
           <Icon name="ArrowRight" size={24} className="ml-2" />
