@@ -4,6 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
+import { useSound } from '@/hooks/useSound';
+
 
 interface VideoRecordingProps {
   selectedImage: string | null;
@@ -39,6 +41,8 @@ const VideoRecording = ({
   onNotebookDataChange
 }: VideoRecordingProps) => {
   const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+  const { playClickSound } = useSound();
+
 
   const handleNotebookChange = (field: keyof NotebookData, value: string) => {
     // Разрешить ввод только во время активной записи
@@ -98,7 +102,7 @@ const VideoRecording = ({
                   onClick={(e) => e.stopPropagation()}
                 />
                 <Button
-                  onClick={() => setIsImageEnlarged(false)}
+                  onClick={() => { playClickSound(); setIsImageEnlarged(false); }}
                   className="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full w-10 h-10 p-0 transition-all duration-200"
                 >
                   <Icon name="X" size={20} />
@@ -256,14 +260,14 @@ const VideoRecording = ({
                   <>
                     <Button 
                       variant="outline" 
-                      onClick={onBack}
+                      onClick={() => { playClickSound(); onBack(); }}
                       className="h-12 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200"
                     >
                       <Icon name="ArrowLeft" size={16} className="mr-2" />
                       Назад
                     </Button>
                     <Button 
-                      onClick={isRecording ? onStopRecording : onStartRecording}
+                      onClick={() => { playClickSound(); isRecording ? onStopRecording() : onStartRecording(); }}
                       className={`h-12 rounded-xl ${
                         isRecording 
                           ? 'bg-red-500 hover:bg-red-600' 
@@ -278,14 +282,14 @@ const VideoRecording = ({
                   <>
                     <Button 
                       variant="outline" 
-                      onClick={onRetake}
+                      onClick={() => { playClickSound(); onRetake(); }}
                       className="h-12 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200"
                     >
                       <Icon name="RotateCcw" size={16} className="mr-2" />
                       Пересъёмка
                     </Button>
                     <Button 
-                      onClick={onNext}
+                      onClick={() => { playClickSound(); onNext(); }}
                       className="h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-xl shadow-green-500/30 transition-all duration-300 font-semibold"
                     >
                       Далее
