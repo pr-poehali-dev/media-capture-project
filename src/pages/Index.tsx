@@ -1,13 +1,24 @@
 import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import Icon from '@/components/ui/icon';
+import StartScreen from '@/components/StartScreen';
+import ImageSelection from '@/components/ImageSelection';
+import VideoRecording from '@/components/VideoRecording';
+import SaveScreen from '@/components/SaveScreen';
+import AuthModal from '@/components/AuthModal';
+
+interface YandexUser {
+  email: string;
+  name: string;
+  token?: string;
+}
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [recordedVideo, setRecordedVideo] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [isUploadingToCloud, setIsUploadingToCloud] = useState(false);
+  const [yandexUser, setYandexUser] = useState<YandexUser | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -99,273 +110,368 @@ const Index = () => {
   };
 
   const downloadVideo = async () => {
-    if (recordedVideo) {
-      try {
-        // Для iPhone используем более совместимый способ сохранения
-        const response = await fetch(recordedVideo);
-        const blob = await response.blob();
+    if (!recordedVideo) return;
+
+    try {
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      
+      // Определяем расширение файла по MIME типу
+      const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
+      const filename = `imperia_video_${new Date().getTime()}.${extension}`;
+      
+      // Проверяем, поддерживает ли браузер Web Share API (для мобильных устройств)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([blob], filename, { type: blob.type });
+          
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'IMPERIA PROMO Video',
+              text: 'Сохранить видео в галерею',
+              files: [file]
+            });
+            return;
+          }
+        } catch (shareError) {
+          console.log('Web Share API не сработал, используем fallback:', shareError);
+        }
+      }
+
+      // Fallback для iPhone Safari: используем объект URL и пользовательские действия
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      
+      if (isIOS || isSafari) {
+        // Для iOS создаём ссылку и показываем инструкцию
+        const videoUrl = URL.createObjectURL(blob);
         
-        // Определяем расширение файла по MIME типу
-        const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
-        const filename = `video_${new Date().getTime()}.${extension}`;
+        // Открываем видео в новой вкладке
+        const newWindow = window.open(videoUrl, '_blank');
         
-        // Создаём ссылку для скачивания
+        if (newWindow) {
+          // Показываем инструкцию пользователю
+          alert(
+            'Для сохранения видео на iPhone:\n\n' +
+            '1. Нажмите и удерживайте видео\n' +
+            '2. Выберите "Сохранить в Фото"\n' +
+            '3. Видео будет сохранено в галерею'
+          );
+        } else {
+          // Если popup заблокирован, используем прямое скачивание
+          throw new Error('Не удалось открыть видео для сохранения');
+        }
+        
+        // Очищаем URL через некоторое время
+        setTimeout(() => {
+          URL.revokeObjectURL(videoUrl);
+        }, 60000); // 1 минута на сохранение
+        
+      } else {
+        // Для других браузеров используем стандартное скачивание
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = filename;
         a.style.display = 'none';
         
-        // Добавляем в DOM, кликаем и удаляем
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         
-        // Очищаем URL объект
         setTimeout(() => {
           URL.revokeObjectURL(a.href);
         }, 100);
         
-        alert('Видео сохранено в галерею устройства!');
-      } catch (error) {
-        console.error('Ошибка сохранения видео:', error);
-        alert('Не удалось сохранить видео');
+        alert('Видео сохранено!');
+      }
+      
+    } catch (error) {
+      console.error('Ошибка сохранения видео:', error);
+      
+      // Показываем пользователю альтернативный способ
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        alert(
+          'Не удалось автоматически сохранить видео.\n\n' +
+          'Альтернативный способ:\n' +
+          '1. Воспроизведите видео на экране "Готово!"\n' +
+          '2. Нажмите и удерживайте видео\n' +
+          '3. Выберите "Сохранить в Фото"'
+        );
+      } else {
+        alert('Не удалось сохранить видео. Попробуйте ещё раз.');
       }
     }
   };
 
+  const loginToYandex = async (email: string, password: string) => {
+    try {
+      // ВАЖНО: В реальном проекте нужно зарегистрировать приложение в Яндекс.Консоли
+      // и получить настоящий CLIENT_ID. Пока используем демо-режим.
+      
+      // Проверяем, что введены данные (для демо)
+      if (!email.trim()) {
+        throw new Error('Введите ваш email от Яндекс аккаунта');
+      }
+      
+      // Имитируем процесс авторизации с задержкой
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // В демо-режиме создаем пользователя на основе введенного email
+      const userData = {
+        email: email,
+        name: email.split('@')[0],
+        token: 'demo_token_' + Math.random().toString(36).substring(7)
+      };
+      
+      setYandexUser(userData);
+      setShowAuthModal(false);
+      
+      alert(
+        `✅ Демо-авторизация успешна!\n\n` +
+        `Пользователь: ${userData.name}\n` +
+        `Email: ${userData.email}\n\n` +
+        `⚠️ ВНИМАНИЕ: Это демо-режим!\n` +
+        `В реальном проекте нужно:\n` +
+        `1. Зарегистрировать приложение в Яндекс.Консоли\n` +
+        `2. Получить CLIENT_ID для OAuth\n` +
+        `3. Настроить домен для редиректа`
+      );
+      
+    } catch (error) {
+      console.error('Ошибка авторизации:', error);
+      alert(`Ошибка авторизации: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
+    }
+  };
+
+  const logoutFromYandex = () => {
+    setYandexUser(null);
+    alert('Вы вышли из аккаунта Яндекс');
+  };
+
+  const uploadToYandexDisk = async () => {
+    if (!recordedVideo) return;
+    
+    // Проверяем авторизацию
+    if (!yandexUser || !yandexUser.token) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    setIsUploadingToCloud(true);
+    
+    try {
+      // Получаем blob видео
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      
+      // Определяем расширение файла
+      const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
+      const filename = `imperia_video_${new Date().getTime()}.${extension}`;
+      const folderPath = 'IMPERIA_PROMO_Videos';
+      
+      // Симулируем загрузку на Яндекс.Диск (демо-режим)
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // В реальном проекте здесь был бы код загрузки через Yandex Disk API
+      const fileSize = (blob.size / 1024 / 1024).toFixed(2); // размер в МБ
+      
+      alert(
+        `✅ Видео успешно "загружено" на Яндекс.Диск!\n\n` +
+        `📁 Папка: "${folderPath}"\n` +
+        `📄 Файл: ${filename}\n` +
+        `📊 Размер: ${fileSize} МБ\n` +
+        `👤 Аккаунт: ${yandexUser.email}\n\n` +
+        `⚠️ ДЕМО-РЕЖИМ: Файл не загружен реально\n\n` +
+        `Для реальной загрузки нужно:\n` +
+        `1. Зарегистрировать приложение в Яндекс.Консоли\n` +
+        `2. Получить CLIENT_ID и настроить OAuth\n` +
+        `3. Реализовать Yandex Disk API`
+      );
+      
+    } catch (error) {
+      console.error('Ошибка загрузки на Яндекс.Диск:', error);
+      alert(`Ошибка загрузки: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
+    } finally {
+      setIsUploadingToCloud(false);
+    }
+  };
+
   const resetApp = () => {
-    setCurrentStep(0);
+    // Очищаем все состояния в правильном порядке
     setSelectedImage(null);
     setRecordedVideo(null);
     setIsRecording(false);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
     }
+    // Переходим на первый экран последним
+    setCurrentStep(0);
   };
 
-  const renderStartScreen = () => (
-    <div 
-      className="flex flex-col justify-end min-h-screen p-6 bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url('https://cdn.poehali.dev/files/0ccd0fdd-93aa-41f8-ad8d-66467510a595.jpeg')`,
-        backgroundSize: 'contain'
-      }}
-    >
-      <Button 
-        onClick={() => setCurrentStep(1)}
-        size="lg"
-        className="w-full max-w-sm mx-auto h-16 text-xl font-semibold bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg mb-8"
-      >
-        Новый лид
-        <Icon name="ArrowRight" size={24} className="ml-2" />
-      </Button>
-    </div>
-  );
+  const handleRetake = () => {
+    setRecordedVideo(null);
+    setCurrentStep(2);
+  };
 
-  const renderImageSelection = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-2xl flex items-center justify-center">
-            <Icon name="Image" size={32} className="text-green-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Выберите фото</h2>
-          <p className="text-gray-600">Загрузите изображение из галереи</p>
-        </div>
+  const shareToTelegram = async () => {
+    if (!recordedVideo) return;
 
-        {selectedImage ? (
-          <div className="mb-6">
-            <img 
-              src={selectedImage} 
-              alt="Selected" 
-              className="w-full h-48 object-cover rounded-2xl shadow-md"
-            />
-          </div>
-        ) : (
-          <div 
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full h-48 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-green-400 transition-colors mb-6"
-          >
-            <div className="text-center">
-              <Icon name="Plus" size={32} className="text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-500">Нажмите для выбора</p>
-            </div>
-          </div>
-        )}
-
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleImageSelect}
-          accept="image/*"
-          className="hidden"
-        />
-
-        <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            onClick={() => setCurrentStep(0)}
-            className="flex-1 h-12 rounded-xl"
-          >
-            Назад
-          </Button>
-          <Button 
-            onClick={() => setCurrentStep(2)}
-            disabled={!selectedImage}
-            className="flex-1 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl"
-          >
-            Далее
-            <Icon name="ArrowRight" size={20} className="ml-1" />
-          </Button>
-        </div>
-      </Card>
-    </div>
-  );
-
-  const renderVideoRecording = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-900">
-      <Card className="w-full max-w-md p-6 rounded-3xl shadow-lg bg-white">
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Запись видео</h2>
-          <p className="text-gray-600">Снимите короткое видео</p>
-        </div>
-
-        <div className="relative mb-6">
-          {recordedVideo ? (
-            <video 
-              src={recordedVideo} 
-              controls 
-              className="w-full h-64 object-cover rounded-2xl bg-black"
-            />
-          ) : (
-            <video 
-              ref={videoRef}
-              autoPlay 
-              playsInline
-              muted 
-              className="w-full h-64 object-cover rounded-2xl bg-black"
-              style={{ transform: 'scaleX(-1)' }}
-            />
-          )}
+    try {
+      // Получаем blob видео
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      
+      // Определяем расширение файла
+      const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
+      const filename = `imperia_video_${new Date().getTime()}.${extension}`;
+      
+      // Проверяем доступность Web Share API
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([blob], filename, { type: blob.type });
           
-          {isRecording && (
-            <div className="absolute top-4 right-4 flex items-center bg-red-500 text-white px-3 py-1 rounded-full">
-              <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-              REC
-            </div>
-          )}
-        </div>
+          // Проверяем поддержку файлов
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'IMPERIA PROMO Video',
+              text: 'Поделиться видео через Telegram',
+              files: [file]
+            });
+            return;
+          }
+        } catch (shareError) {
+          console.log('Web Share API недоступен:', shareError);
+        }
+      }
 
-        <div className="flex gap-3 mb-4">
-          {!recordedVideo ? (
-            <>
-              <Button 
-                variant="outline" 
-                onClick={() => setCurrentStep(1)}
-                className="flex-1 h-12 rounded-xl"
-              >
-                Назад
-              </Button>
-              <Button 
-                onClick={isRecording ? stopVideoRecording : startVideoRecording}
-                className={`flex-1 h-12 rounded-xl ${
-                  isRecording 
-                    ? 'bg-red-500 hover:bg-red-600' 
-                    : 'bg-red-500 hover:bg-red-600'
-                } text-white`}
-              >
-                <Icon name={isRecording ? "Square" : "Circle"} size={20} className="mr-2" />
-                {isRecording ? 'Стоп' : 'Запись'}
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setRecordedVideo(null);
-                  setCurrentStep(2);
-                }}
-                className="flex-1 h-12 rounded-xl"
-              >
-                Пересъёмка
-              </Button>
-              <Button 
-                onClick={() => setCurrentStep(3)}
-                className="flex-1 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl"
-              >
-                Далее
-                <Icon name="ArrowRight" size={20} className="ml-1" />
-              </Button>
-            </>
-          )}
-        </div>
-      </Card>
-    </div>
-  );
+      // Определяем платформу и браузер
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+      const isMobile = isIOS || isAndroid;
+      
+      if (isMobile) {
+        // Для мобильных устройств используем Telegram URL схему
+        const telegramText = encodeURIComponent('Видео создано с помощью IMPERIA PROMO 🎬');
+        
+        // Сначала пробуем открыть Telegram через URL схему
+        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${telegramText}`;
+        
+        // Создаем временную ссылку для скачивания файла
+        const videoUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = videoUrl;
+        downloadLink.download = filename;
+        
+        // Показываем инструкции пользователю
+        const instructions = isIOS 
+          ? `📱 Для отправки видео в Telegram на iPhone:\n\n1. Сначала сохраните видео в галерею:\n   • Нажмите "Сохранить локально"\n   • Следуйте инструкциям для сохранения\n\n2. Затем откройте Telegram:\n   • Выберите чат или канал\n   • Нажмите 📎 (прикрепить)\n   • Выберите "Фото и видео"\n   • Выберите сохраненное видео\n\n3. Добавьте описание: "Видео создано с IMPERIA PROMO 🎬"`
+          : `📱 Для отправки видео в Telegram на Android:\n\n1. Скачайте видео (автоматически начнется)\n2. Откройте Telegram\n3. Выберите чат или канал\n4. Нажмите 📎 → Файл\n5. Найдите файл "${filename}"\n6. Добавьте описание: "Видео создано с IMPERIA PROMO 🎬"`;
 
-  const renderSaveScreen = () => (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-green-50 to-blue-50">
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-2xl flex items-center justify-center">
-            <Icon name="CheckCircle" size={32} className="text-green-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Готово!</h2>
-          <p className="text-gray-600">Ваше видео готово к сохранению</p>
-        </div>
+        alert(instructions);
 
-        {selectedImage && (
-          <div className="mb-4">
-            <p className="text-sm text-gray-500 mb-2">Выбранное фото:</p>
-            <img 
-              src={selectedImage} 
-              alt="Selected" 
-              className="w-full h-32 object-cover rounded-xl"
-            />
-          </div>
-        )}
+        // Автоматически скачиваем файл на Android
+        if (isAndroid) {
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+        }
 
-        {recordedVideo && (
-          <div className="mb-6">
-            <p className="text-sm text-gray-500 mb-2">Записанное видео:</p>
-            <video 
-              src={recordedVideo} 
-              controls 
-              className="w-full h-32 object-cover rounded-xl"
-            />
-          </div>
-        )}
+        // Открываем Telegram для добавления описания
+        setTimeout(() => {
+          window.open(telegramUrl, '_blank');
+        }, 1000);
 
-        <div className="flex flex-col gap-3">
-          <Button 
-            onClick={downloadVideo}
-            className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
-          >
-            <Icon name="Download" size={20} className="mr-2" />
-            Сохранить видео
-          </Button>
-          
-          <Button 
-            variant="outline"
-            onClick={resetApp}
-            className="w-full h-12 rounded-xl"
-          >
-            Создать ещё
-          </Button>
-        </div>
-      </Card>
-    </div>
-  );
+        // Очищаем URL через 5 минут
+        setTimeout(() => {
+          URL.revokeObjectURL(videoUrl);
+        }, 300000);
+
+      } else {
+        // Для десктопа показываем инструкции
+        const videoUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = videoUrl;
+        downloadLink.download = filename;
+        
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        setTimeout(() => {
+          URL.revokeObjectURL(videoUrl);
+        }, 100);
+
+        alert(
+          `💻 Для отправки в Telegram Web:\n\n` +
+          `1. Видео скачано: "${filename}"\n` +
+          `2. Откройте Telegram Web или приложение\n` +
+          `3. Выберите чат или канал\n` +
+          `4. Перетащите файл в окно чата\n` +
+          `5. Добавьте описание: "Видео создано с IMPERIA PROMO 🎬"`
+        );
+      }
+
+    } catch (error) {
+      console.error('Ошибка при отправке в Telegram:', error);
+      alert(
+        `Ошибка при подготовке к отправке в Telegram.\n\n` +
+        `Попробуйте:\n` +
+        `1. Сохранить видео локально\n` +
+        `2. Вручную отправить через Telegram\n\n` +
+        `Ошибка: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`
+      );
+    }
+  };
 
   const screens = [
-    renderStartScreen,
-    renderImageSelection, 
-    renderVideoRecording,
-    renderSaveScreen
+    () => <StartScreen onStart={() => setCurrentStep(1)} />,
+    () => (
+      <ImageSelection 
+        selectedImage={selectedImage}
+        onImageSelect={handleImageSelect}
+        onBack={() => setCurrentStep(0)}
+        onNext={() => setCurrentStep(2)}
+      />
+    ),
+    () => (
+      <VideoRecording 
+        selectedImage={selectedImage}
+        recordedVideo={recordedVideo}
+        isRecording={isRecording}
+        onBack={() => setCurrentStep(1)}
+        onNext={() => setCurrentStep(3)}
+        onStartRecording={startVideoRecording}
+        onStopRecording={stopVideoRecording}
+        onRetake={handleRetake}
+        videoRef={videoRef}
+      />
+    ),
+    () => (
+      <SaveScreen 
+        selectedImage={selectedImage}
+        recordedVideo={recordedVideo}
+        yandexUser={yandexUser}
+        isUploadingToCloud={isUploadingToCloud}
+        onDownloadVideo={downloadVideo}
+        onUploadToYandex={uploadToYandexDisk}
+        onLogoutFromYandex={logoutFromYandex}
+        onShareToTelegram={shareToTelegram}
+        onReset={resetApp}
+      />
+    )
   ];
 
-  return screens[currentStep]();
+  return (
+    <>
+      {screens[currentStep]()}
+      {showAuthModal && (
+        <AuthModal 
+          onLogin={loginToYandex}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
+    </>
+  );
 };
 
 export default Index;
