@@ -28,24 +28,29 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
               backgroundPosition: 'center'
             }}
           >
-            {/* Анимированные извивающиеся линии */}
+            {/* Декоративные элементы */}
             <div className="absolute inset-0 pointer-events-none">
-              {/* Длинные плавающие линии */}
-              <div className="absolute top-8 left-2 w-40 h-1 bg-gradient-to-r from-white to-blue-200 opacity-30 animate-float-line rounded-full"></div>
-              <div className="absolute top-20 right-4 w-36 h-1 bg-gradient-to-l from-blue-300 to-transparent opacity-40 animate-drift-line rounded-full"></div>
-              <div className="absolute bottom-24 left-6 w-44 h-1 bg-gradient-to-r from-transparent via-white to-blue-100 opacity-25 animate-float-line rounded-full" style={{ animationDelay: '1s' }}></div>
+              {/* Светящиеся частицы */}
+              <div className="absolute top-16 left-8 w-2 h-2 bg-blue-400 rounded-full animate-ping opacity-60"></div>
+              <div className="absolute top-32 right-12 w-1.5 h-1.5 bg-white rounded-full animate-pulse opacity-70" style={{ animationDelay: '1s' }}></div>
+              <div className="absolute bottom-20 left-16 w-2.5 h-2.5 bg-blue-300 rounded-full animate-ping opacity-50" style={{ animationDelay: '2s' }}></div>
+              <div className="absolute bottom-32 right-8 w-1 h-1 bg-white rounded-full animate-pulse opacity-80" style={{ animationDelay: '3s' }}></div>
               
-              {/* Длинные вертикальные извивающиеся линии */}
-              <div className="absolute top-4 right-8 w-1 h-32 bg-gradient-to-b from-blue-200 to-white opacity-35 animate-drift-line rounded-full" style={{ animationDelay: '2s' }}></div>
-              <div className="absolute bottom-8 left-12 w-1 h-36 bg-gradient-to-t from-white via-blue-100 to-transparent opacity-30 animate-float-line rounded-full" style={{ animationDelay: '3s' }}></div>
+              {/* Парящие иконки */}
+              <div className="absolute top-20 right-16 text-white/40 animate-bounce" style={{ animationDelay: '0.5s' }}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div className="absolute bottom-24 left-12 text-blue-300/50 animate-bounce" style={{ animationDelay: '1.5s' }}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
               
-              {/* Длинные диагональные извивающиеся линии */}
-              <div className="absolute top-16 left-16 w-28 h-1 bg-gradient-to-r from-blue-300 via-white to-blue-200 opacity-40 animate-drift-line rounded-full" style={{ animationDelay: '1.5s' }}></div>
-              <div className="absolute bottom-32 right-12 w-32 h-1 bg-gradient-to-l from-white via-blue-100 to-transparent opacity-35 animate-float-line rounded-full" style={{ animationDelay: '2.5s' }}></div>
-              
-              {/* Дополнительные извивающиеся элементы */}
-              <div className="absolute top-32 left-20 w-24 h-1 bg-gradient-to-r from-transparent to-blue-200 opacity-20 animate-drift-line rounded-full" style={{ animationDelay: '4s' }}></div>
-              <div className="absolute bottom-16 right-20 w-28 h-1 bg-gradient-to-l from-white to-blue-300 opacity-30 animate-float-line rounded-full" style={{ animationDelay: '0.5s' }}></div>
+              {/* Градиентный overlay для глубины */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-900/10 via-transparent to-purple-900/10"></div>
             </div>
           </div>
         </div>
