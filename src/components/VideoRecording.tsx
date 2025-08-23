@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useSound } from '@/hooks/useSound';
 
-
 interface VideoRecordingProps {
   selectedImage: string | null;
   recordedVideo: string | null;
@@ -42,7 +41,6 @@ const VideoRecording = ({
 }: VideoRecordingProps) => {
   const [isImageEnlarged, setIsImageEnlarged] = useState(false);
   const { playClickSound } = useSound();
-
 
   const handleNotebookChange = (field: keyof NotebookData, value: string) => {
     // Разрешить ввод только во время активной записи
