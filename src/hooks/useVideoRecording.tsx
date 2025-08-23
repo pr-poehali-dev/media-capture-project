@@ -9,12 +9,12 @@ export const useVideoRecording = () => {
 
   const startVideoRecording = async () => {
     try {
-      // УПРОЩЕННЫЕ настройки специально для Android
+      // Настройки для задней камеры мобильного устройства
       const constraints = {
         video: {
-          facingMode: 'user',
-          width: { ideal: 640, max: 1280 },
-          height: { ideal: 480, max: 720 }
+          facingMode: 'environment',
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 }
         },
         audio: true
       };
