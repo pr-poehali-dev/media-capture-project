@@ -137,7 +137,7 @@ export default {
 						boxShadow: '0 20px 25px -5px rgba(59, 130, 246, 0.4)'
 					},
 					'50%': {
-						transform: 'scale(1.05)',
+						transform: 'scale(1.02)',
 						boxShadow: '0 25px 50px -12px rgba(59, 130, 246, 0.6)'
 					}
 				}
