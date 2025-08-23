@@ -24,16 +24,10 @@ const Index = () => {
     isRecording,
     recordedVideo,
     videoRef,
-    currentCamera,
-    availableCameras,
-    isPreviewActive,
     startVideoRecording: startRecording,
     stopVideoRecording,
     downloadVideo,
-    resetRecording,
-    switchCamera,
-    startCameraPreview,
-    getAvailableCameras
+    resetRecording
   } = useVideoRecording();
 
   const {
@@ -128,18 +122,12 @@ const Index = () => {
         isRecording={isRecording}
         onBack={() => setCurrentStep(1)}
         onNext={() => setCurrentStep(3)}
-        onStartRecording={startRecording}
+        onStartRecording={startVideoRecording}
         onStopRecording={stopVideoRecording}
         onRetake={handleRetake}
-        onDownload={downloadVideo}
         videoRef={videoRef}
         notebookData={notebookData}
         onNotebookDataChange={setNotebookData}
-        currentCamera={currentCamera}
-        availableCameras={availableCameras}
-        isPreviewActive={isPreviewActive}
-        onSwitchCamera={switchCamera}
-        onStartPreview={startCameraPreview}
       />
     ),
     () => (
