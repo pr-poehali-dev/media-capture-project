@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useSound } from '@/hooks/useSound';
+import VideoPlayer from '@/components/VideoPlayer';
 
 
 interface VideoRecordingProps {
@@ -16,9 +17,16 @@ interface VideoRecordingProps {
   onStartRecording: () => Promise<void>;
   onStopRecording: () => void;
   onRetake: () => void;
+  onDownload?: () => void;
   videoRef: React.RefObject<HTMLVideoElement>;
   notebookData?: NotebookData;
   onNotebookDataChange?: (data: NotebookData) => void;
+  // Новые пропы для камеры
+  currentCamera?: 'environment' | 'user';
+  availableCameras?: MediaDeviceInfo[];
+  onSwitchCamera?: () => void;
+  onStartPreview?: () => void;
+  isPreviewActive?: boolean;
 }
 
 export interface NotebookData {
@@ -36,12 +44,19 @@ const VideoRecording = ({
   onStartRecording, 
   onStopRecording,
   onRetake,
+  onDownload,
   videoRef,
   notebookData = { parentName: '', childName: '', age: '' },
-  onNotebookDataChange
+  onNotebookDataChange,
+  currentCamera = 'environment',
+  availableCameras = [],
+  onSwitchCamera,
+  onStartPreview,
+  isPreviewActive = false
 }: VideoRecordingProps) => {
   const [isImageEnlarged, setIsImageEnlarged] = useState(false);
   const [isLoadingCamera, setIsLoadingCamera] = useState(false);
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
   const { playClickSound } = useSound();
   
   const handleStartRecording = async () => {
@@ -257,7 +272,7 @@ const VideoRecording = ({
                       muted 
                       className="w-full h-full object-cover rounded-2xl bg-black"
                       style={{ 
-                        transform: 'scaleX(-1)',
+                        transform: currentCamera === 'user' ? 'scaleX(1)' : 'scaleX(-1)',
                         maxHeight: '70vh'
                       }}
                       onLoadedMetadata={() => {
@@ -267,13 +282,44 @@ const VideoRecording = ({
                       }}
                     />
                     
+                    {/* Кнопки управления камерой */}
+                    {!isRecording && isPreviewActive && (
+                      <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        {/* Переключение камеры */}
+                        {availableCameras.length > 1 && onSwitchCamera && (
+                          <Button
+                            onClick={() => { playClickSound(); onSwitchCamera(); }}
+                            className="bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full w-12 h-12 p-0"
+                            title={`Переключить на ${currentCamera === 'environment' ? 'фронтальную' : 'тыловую'} камеру`}
+                          >
+                            <Icon name="RotateCcw" size={20} />
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Кнопка запуска предпросмотра если камера не активна */}
+                    {!isPreviewActive && !isLoadingCamera && onStartPreview && (
+                      <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center rounded-2xl">
+                        <Button
+                          onClick={() => { playClickSound(); onStartPreview(); }}
+                          className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-6 py-4 text-lg"
+                        >
+                          <Icon name="Camera" size={24} className="mr-3" />
+                          Запустить камеру
+                        </Button>
+                      </div>
+                    )}
+                    
                     {/* Индикатор подключения камеры */}
                     {isLoadingCamera && (
                       <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center rounded-2xl">
                         <div className="text-center text-white">
                           <Icon name="Loader2" size={48} className="mx-auto mb-4 animate-spin" />
                           <p className="text-lg font-medium">Подключаем камеру...</p>
-                          <p className="text-sm opacity-75 mt-2">Откройте консоль (F12) для отладки</p>
+                          <p className="text-sm opacity-75 mt-2">
+                            {currentCamera === 'environment' ? 'Тыловая камера' : 'Фронтальная камера'}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -336,6 +382,16 @@ const VideoRecording = ({
                       <Icon name="RotateCcw" size={16} className="mr-2" />
                       Пересъёмка
                     </Button>
+                    
+                    {/* Кнопка просмотра видео */}
+                    <Button 
+                      onClick={() => { playClickSound(); setShowVideoPlayer(true); }}
+                      className="h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all duration-200"
+                    >
+                      <Icon name="Play" size={16} className="mr-2" />
+                      Просмотр
+                    </Button>
+                    
                     <Button 
                       onClick={() => { playClickSound(); onNext(); }}
                       className="h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-xl shadow-green-500/30 transition-all duration-300 font-semibold"
@@ -350,6 +406,23 @@ const VideoRecording = ({
           </Card>
         </div>
       </div>
+
+      {/* Модальное окно с видеоплеером */}
+      {showVideoPlayer && recordedVideo && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowVideoPlayer(false)}
+        >
+          <div className="w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+            <VideoPlayer
+              videoSrc={recordedVideo}
+              onClose={() => setShowVideoPlayer(false)}
+              onDownload={onDownload}
+              className="w-full"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -3,39 +3,100 @@ import { useRef, useState } from 'react';
 export const useVideoRecording = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideo, setRecordedVideo] = useState<string | null>(null);
+  const [currentCamera, setCurrentCamera] = useState<'environment' | 'user'>('environment'); // 'environment' = тыловая, 'user' = фронтальная
+  const [availableCameras, setAvailableCameras] = useState<MediaDeviceInfo[]>([]);
+  const [isPreviewActive, setIsPreviewActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  const startVideoRecording = async () => {
+  // Получение списка камер
+  const getAvailableCameras = async () => {
     try {
-      console.log('🚀 Начинаем запись видео...');
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter(device => device.kind === 'videoinput');
+      setAvailableCameras(cameras);
+      console.log('📹 Найдено камер:', cameras.length);
+      return cameras;
+    } catch (error) {
+      console.error('⚠️ Ошибка получения списка камер:', error);
+      return [];
+    }
+  };
+
+  // Запуск предпросмотра камеры
+  const startCameraPreview = async (facingMode: 'environment' | 'user' = currentCamera) => {
+    try {
+      console.log(`📹 Запускаем камеру: ${facingMode === 'environment' ? 'тыловая' : 'фронтальная'}`);
       
-      // ПРОСТЕЙШИЕ настройки для максимальной совместимости
+      // Останавливаем текущий поток если есть
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      
       const constraints = {
-        video: true,
+        video: { facingMode },
         audio: true
       };
 
-      console.log('📱 Запрашиваем доступ к камере...');
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('✅ Поток получен:', stream.getTracks().length, 'треков');
-      
       streamRef.current = stream;
+      setCurrentCamera(facingMode);
+      setIsPreviewActive(true);
       
       if (videoRef.current) {
-        console.log('🎥 Подключаем поток к видео элементу...');
         videoRef.current.srcObject = stream;
         videoRef.current.muted = true;
         videoRef.current.playsInline = true;
         
         try {
           await videoRef.current.play();
-          console.log('▶️ Видео запущено');
+          console.log('▶️ Предпросмотр запущен');
         } catch (playError) {
           console.warn('⚠️ Автовоспроизведение заблокировано:', playError);
-          // Это нормально для многих браузеров
         }
+      }
+      
+      return stream;
+    } catch (error) {
+      console.error('⚠️ Ошибка запуска камеры:', error);
+      setIsPreviewActive(false);
+      throw error;
+    }
+  };
+
+  // Переключение камеры
+  const switchCamera = async () => {
+    if (isRecording) {
+      console.warn('⚠️ Нельзя переключать камеру во время записи');
+      return;
+    }
+    
+    console.log('🔄 Переключаем камеру...');
+    const newCamera = currentCamera === 'environment' ? 'user' : 'environment';
+    
+    try {
+      await startCameraPreview(newCamera);
+      console.log(`✅ Переключено на ${newCamera === 'environment' ? 'тыловую' : 'фронтальную'} камеру`);
+    } catch (error) {
+      console.error('❌ Ошибка переключения камеры:', error);
+      // Возвращаемся к предыдущей камере
+      try {
+        await startCameraPreview(currentCamera);
+      } catch (fallbackError) {
+        console.error('❌ Не удалось вернуться к предыдущей камере:', fallbackError);
+      }
+    }
+  };
+
+  const startVideoRecording = async () => {
+    try {
+      console.log('🚀 Начинаем запись видео...');
+      
+      // Если предпросмотр не активен, запускаем камеру
+      let stream = streamRef.current;
+      if (!stream || !isPreviewActive) {
+        stream = await startCameraPreview();
       }
 
       // Простейший MediaRecorder без сложных настроек
@@ -58,14 +119,6 @@ export const useVideoRecording = () => {
         const url = URL.createObjectURL(blob);
         console.log('✅ Видео готово:', url);
         setRecordedVideo(url);
-        
-        // Останавливаем поток
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => {
-            track.stop();
-            console.log('🔇 Трек остановлен:', track.kind);
-          });
-        }
       };
 
       mediaRecorder.onerror = (event) => {
@@ -153,6 +206,7 @@ export const useVideoRecording = () => {
     
     setRecordedVideo(null);
     setIsRecording(false);
+    setIsPreviewActive(false);
     
     if (mediaRecorderRef.current) {
       try {
@@ -185,13 +239,36 @@ export const useVideoRecording = () => {
     console.log('✅ Сброс завершен');
   };
 
+  const stopPreview = () => {
+    console.log('🛑 Останавливаем предпросмотр...');
+    
+    if (streamRef.current && !isRecording) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+      setIsPreviewActive(false);
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+      
+      console.log('✅ Предпросмотр остановлен');
+    }
+  };
+
   return {
     isRecording,
     recordedVideo,
     videoRef,
+    currentCamera,
+    availableCameras,
+    isPreviewActive,
     startVideoRecording,
     stopVideoRecording,
     downloadVideo,
-    resetRecording
+    resetRecording,
+    switchCamera,
+    startCameraPreview,
+    stopPreview,
+    getAvailableCameras
   };
 };
