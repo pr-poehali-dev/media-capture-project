@@ -131,6 +131,14 @@ export default {
 						filter: 'brightness(1.1) contrast(1.3) saturate(1.5)'
 					}
 				},
+				'glow-text': {
+					'0%': {
+						textShadow: '0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3), 0 0 15px rgba(59, 130, 246, 0.5)'
+					},
+					'100%': {
+						textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(59, 130, 246, 0.8)'
+					}
+				},
 
 			},
 			animation: {
@@ -139,6 +147,7 @@ export default {
 				'shimmer': 'shimmer 2s ease-in-out infinite',
 				'shimmer-delayed': 'shimmer 2s ease-in-out 0.5s infinite',
 				'breathe': 'breathe 4s ease-in-out infinite',
+				'glow-text': 'glow-text 2s ease-in-out infinite alternate',
 				'float-line': 'float-line 6s ease-in-out infinite',
 				'drift-line': 'drift-line 8s ease-in-out infinite'
 			}
