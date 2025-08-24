@@ -46,8 +46,8 @@ const SaveScreen = ({
 
       <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-white/80 backdrop-blur-xl border border-blue-200/50">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-green-400/20">
-            <Icon name="CheckCircle" size={32} className="text-green-600" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-600 rounded-2xl flex items-center justify-center">
+            <Icon name="CheckCircle" size={32} className="text-white" />
           </div>
           <h2 className="text-2xl font-bold text-blue-900 mb-2 drop-shadow-sm">Готово!</h2>
           <p className="text-blue-600">Ваше видео готово к сохранению</p>
@@ -89,7 +89,7 @@ const SaveScreen = ({
                 variant="ghost"
                 size="sm"
                 onClick={onLogoutFromYandex}
-                className="text-blue-600 hover:text-blue-700 hover:bg-blue-100/50"
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-100"
               >
                 <Icon name="LogOut" size={16} />
               </Button>
@@ -145,7 +145,7 @@ const SaveScreen = ({
           <Button 
             variant="outline"
             onClick={onReset}
-            className="w-full h-12 rounded-xl border-blue-400/60 text-blue-600 hover:bg-blue-100 backdrop-blur-sm bg-white/50"
+            className="w-full h-12 rounded-xl border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-200"
           >
             Создать ещё
           </Button>

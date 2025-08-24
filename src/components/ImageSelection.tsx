@@ -25,10 +25,10 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
       {/* Сетка для техно-эффекта */}
       <div className="absolute inset-0 opacity-10 bg-grid-pattern"></div>
 
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-white/80 backdrop-blur-xl border border-blue-200/50">
+      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-white border border-gray-200">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-blue-400/20">
-            <Icon name="QrCode" size={32} className="text-blue-600" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-600 rounded-2xl flex items-center justify-center">
+            <Icon name="QrCode" size={32} className="text-white" />
           </div>
           <h2 className="text-2xl font-bold text-blue-900 mb-2 drop-shadow-sm">Выберите QR-код</h2>
         </div>
@@ -68,14 +68,14 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           <Button 
             variant="outline" 
             onClick={onBack}
-            className="flex-1 h-12 rounded-xl border-blue-400/60 text-blue-600 hover:bg-blue-100 backdrop-blur-sm bg-white/50"
+            className="flex-1 h-12 rounded-xl border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-200"
           >
             Назад
           </Button>
           <Button 
             onClick={onNext}
             disabled={!selectedImage}
-            className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl shadow-lg disabled:opacity-50"
+            className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg disabled:opacity-50"
           >
             Далее
             <Icon name="ArrowRight" size={20} className="ml-1" />

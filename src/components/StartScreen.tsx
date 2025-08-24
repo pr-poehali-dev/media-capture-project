@@ -17,35 +17,24 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
       
       {/* Сетка для техно-эффекта */}
       <div className="absolute inset-0 opacity-10 bg-grid-pattern"></div>
-      {/* Единственная центральная надпись с пульсацией */}
-      <div className="flex flex-col items-center justify-center flex-1 px-4">
-        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-blue-900 animate-pulse-gentle mb-2 sm:mb-4 text-center drop-shadow-lg leading-tight">
+      {/* Основной контент */}
+      <div className="flex flex-col items-center justify-center flex-1 px-4 space-y-8 sm:space-y-12">
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-blue-900 animate-pulse-gentle text-center drop-shadow-lg leading-tight">
           IMPERIA PROMO
         </h1>
-        <div className="text-lg sm:text-2xl md:text-3xl font-light text-blue-700 text-center animate-fade-in opacity-90">
-          СОВЕРШЕНСТВО В РАБОТЕ
-        </div>
-      </div>
-      
-      {/* Кнопка внизу */}
-      <div className="w-full flex justify-center px-4">
+        
+        {/* Кнопка */}
         <Button 
           onClick={onStart}
           size="lg"
-          className="w-full max-w-sm h-14 sm:h-16 relative overflow-hidden group"
-          style={{
-            background: 'linear-gradient(135deg, #1a1a1a 0%, #333333 50%, #1a1a1a 100%)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)'
-          }}
+          className="w-full max-w-sm h-14 sm:h-16 text-lg sm:text-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-2xl shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 to-yellow-300/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <span className="relative z-10 text-white font-bold text-lg sm:text-xl tracking-wider uppercase flex items-center justify-center">
-            Новый лид
-            <Icon name="ArrowRight" size={20} className="ml-2" />
-          </span>
-          <div className="absolute inset-0 border border-gray-600/50 rounded-2xl" />
+          Новый лид
+          <Icon name="ArrowRight" size={20} className="ml-2" />
         </Button>
       </div>
+      
+
     </div>
   );
 };

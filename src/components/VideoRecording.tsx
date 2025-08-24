@@ -68,8 +68,8 @@ const VideoRecording = ({
           <Card className="bg-white border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-shadow rounded-xl">
             <div className="relative h-full flex flex-col p-6">
               <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 border border-blue-200">
-                  <Icon name="QrCode" size={20} className="text-blue-600" />
+                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mr-3">
+                  <Icon name="QrCode" size={20} className="text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">QR-код</h3>
               </div>
@@ -121,8 +121,8 @@ const VideoRecording = ({
           <Card className="bg-white border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-shadow rounded-xl">
             <div className="relative h-full flex flex-col p-6">
               <div className="flex items-center mb-6">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3 border border-green-200">
-                  <Icon name="BookOpen" size={20} className="text-green-600" />
+                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mr-3">
+                  <Icon name="BookOpen" size={20} className="text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Анкета</h3>
                 {!isRecording && (
@@ -221,8 +221,8 @@ const VideoRecording = ({
           <Card className="bg-white border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-shadow rounded-xl">
             <div className="relative h-full flex flex-col p-6">
               <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3 border border-red-200">
-                  <Icon name="Video" size={20} className="text-red-600" />
+                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mr-3">
+                  <Icon name="Video" size={20} className="text-white" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">Контроль качества</h3>
                 {isRecording && (
@@ -274,11 +274,7 @@ const VideoRecording = ({
                     </Button>
                     <Button 
                       onClick={isRecording ? onStopRecording : onStartRecording}
-                      className={`h-12 rounded-xl ${
-                        isRecording 
-                          ? 'bg-red-500 hover:bg-red-600' 
-                          : 'bg-red-500 hover:bg-red-600'
-                      } text-white`}
+                      className="h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       <Icon name={isRecording ? "Square" : "Circle"} size={16} className="mr-2" />
                       {isRecording ? 'Стоп' : 'Запись'}
@@ -296,7 +292,7 @@ const VideoRecording = ({
                     </Button>
                     <Button 
                       onClick={onNext}
-                      className="h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-xl shadow-green-500/30 transition-all duration-300 font-semibold"
+                      className="h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-xl shadow-blue-500/30 transition-all duration-300 font-semibold"
                     >
                       Далее
                       <Icon name="ArrowRight" size={16} className="ml-2" />
