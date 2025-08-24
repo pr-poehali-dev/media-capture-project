@@ -14,23 +14,13 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
-      {/* Современные геометрические элементы фона */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400 rounded-full blur-3xl animate-pulse-gentle"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-400 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '2s'}}></div>
-      </div>
-      
-      {/* Сетка для техно-эффекта */}
-      <div className="absolute inset-0 opacity-5 bg-grid-pattern"></div>
-
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-black/20 backdrop-blur-xl border border-white/10">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-blue-50">
+      <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-blue-400/30">
-            <Icon name="QrCode" size={32} className="text-blue-300" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-2xl flex items-center justify-center">
+            <Icon name="QrCode" size={32} className="text-blue-university" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">Выберите QR-код</h2>
+          <h2 className="text-2xl font-bold text-blue-university mb-2">Выберите QR-код</h2>
         </div>
 
         {selectedImage ? (
@@ -47,11 +37,11 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
         ) : (
           <div 
             onClick={() => fileInputRef.current?.click()}
-            className="w-full h-48 border-2 border-dashed border-blue-400/50 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-300 transition-colors mb-6 backdrop-blur-sm bg-white/5"
+            className="w-full h-48 border-2 border-dashed border-blue-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-university transition-colors mb-6"
           >
             <div className="text-center">
-              <Icon name="Plus" size={32} className="text-blue-300 mx-auto mb-2" />
-              <p className="text-blue-200">Нажмите для выбора</p>
+              <Icon name="Plus" size={32} className="text-blue-400 mx-auto mb-2" />
+              <p className="text-blue-500">Нажмите для выбора</p>
             </div>
           </div>
         )}
@@ -68,14 +58,14 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
           <Button 
             variant="outline" 
             onClick={onBack}
-            className="flex-1 h-12 rounded-xl border-blue-300/50 text-blue-200 hover:bg-blue-500/20 backdrop-blur-sm bg-white/5"
+            className="flex-1 h-12 rounded-xl border-blue-university text-blue-university hover:bg-blue-50"
           >
             Назад
           </Button>
           <Button 
             onClick={onNext}
             disabled={!selectedImage}
-            className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl shadow-lg border border-blue-400/30 backdrop-blur-sm disabled:opacity-50"
+            className="flex-1 h-12 bg-blue-university hover:bg-blue-university-dark text-white rounded-xl"
           >
             Далее
             <Icon name="ArrowRight" size={20} className="ml-1" />
