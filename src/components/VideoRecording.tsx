@@ -52,16 +52,16 @@ const VideoRecording = ({
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-blue-50">
       <div className="max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 min-h-[calc(100vh-2rem)] lg:min-h-[calc(100vh-3rem)] p-4 lg:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 min-h-[calc(100vh-1rem)] sm:min-h-[calc(100vh-2rem)] lg:min-h-[calc(100vh-3rem)] p-3 sm:p-4 lg:p-6">
           
           {/* Блок 1 - QR-код */}
-          <Card className="bg-white p-6 shadow-lg hover:shadow-xl transition-shadow">
-            <div className="relative h-full flex flex-col p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-blue-university flex items-center justify-center mr-3">
-                  <Icon name="QrCode" size={20} className="text-white" />
+          <Card className="bg-white p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="relative h-full flex flex-col p-3 sm:p-6">
+              <div className="flex items-center mb-3 sm:mb-4">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-university flex items-center justify-center mr-2 sm:mr-3">
+                  <Icon name="QrCode" size={16} className="text-white sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-university">QR-код</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-blue-university">QR-код</h3>
               </div>
               
               {selectedImage ? (
@@ -108,13 +108,13 @@ const VideoRecording = ({
           )}
 
           {/* Блок 2 - Анкета */}
-          <Card className="bg-white p-6 shadow-lg hover:shadow-xl transition-shadow">
-            <div className="relative h-full flex flex-col p-6">
-              <div className="flex items-center mb-6">
-                <div className="w-10 h-10 rounded-full bg-blue-university flex items-center justify-center mr-3">
-                  <Icon name="BookOpen" size={20} className="text-white" />
+          <Card className="bg-white p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="relative h-full flex flex-col p-3 sm:p-6">
+              <div className="flex items-center mb-4 sm:mb-6">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-university flex items-center justify-center mr-2 sm:mr-3">
+                  <Icon name="BookOpen" size={16} className="text-white sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-university">Анкета</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-blue-university">Анкета</h3>
                 {!isRecording && (
                   <div className="ml-auto">
                     <div className="flex items-center text-xs text-blue-university bg-blue-100 px-2 py-1 rounded-full">
@@ -136,7 +136,7 @@ const VideoRecording = ({
                     value={notebookData.parentName}
                     onChange={(e) => handleNotebookChange('parentName', e.target.value)}
                     placeholder={!isRecording ? "Доступно только во время записи" : "Введите имя родителя"}
-                    className="w-full h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                    className="w-full h-10 sm:h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 transition-colors text-sm sm:text-base"
                     disabled={!isRecording}
                   />
                 </div>
@@ -151,7 +151,7 @@ const VideoRecording = ({
                     value={notebookData.childName}
                     onChange={(e) => handleNotebookChange('childName', e.target.value)}
                     placeholder={!isRecording ? "Доступно только во время записи" : "Введите имя ребенка"}
-                    className="w-full h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                    className="w-full h-10 sm:h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 transition-colors text-sm sm:text-base"
                     disabled={!isRecording}
                   />
                 </div>
@@ -166,7 +166,7 @@ const VideoRecording = ({
                     value={notebookData.age}
                     onChange={(e) => handleNotebookChange('age', e.target.value)}
                     placeholder={!isRecording ? "Доступно только во время записи" : "Введите возраст"}
-                    className="w-full h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 transition-colors"
+                    className="w-full h-10 sm:h-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 transition-colors text-sm sm:text-base"
                     disabled={!isRecording}
                   />
                 </div>
@@ -208,13 +208,13 @@ const VideoRecording = ({
           </Card>
 
           {/* Блок 3 - Запись видео */}
-          <Card className="bg-white p-6 shadow-lg hover:shadow-xl transition-shadow">
-            <div className="relative h-full flex flex-col p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-blue-university flex items-center justify-center mr-3">
-                  <Icon name="Video" size={20} className="text-white" />
+          <Card className="bg-white p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="relative h-full flex flex-col p-3 sm:p-6">
+              <div className="flex items-center mb-3 sm:mb-4">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-university flex items-center justify-center mr-2 sm:mr-3">
+                  <Icon name="Video" size={16} className="text-white sm:w-5 sm:h-5" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-university">Контроль качества</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-blue-university">Контроль качества</h3>
                 {isRecording && (
                   <div className="ml-auto">
                     <div className="flex items-center text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full animate-pulse">
@@ -251,26 +251,26 @@ const VideoRecording = ({
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {!recordedVideo ? (
                   <>
                     <Button 
                       variant="outline" 
                       onClick={onBack}
-                      className="h-12 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200"
+                      className="h-10 sm:h-12 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200 text-sm sm:text-base"
                     >
-                      <Icon name="ArrowLeft" size={16} className="mr-2" />
+                      <Icon name="ArrowLeft" size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                       Назад
                     </Button>
                     <Button 
                       onClick={isRecording ? onStopRecording : onStartRecording}
-                      className={`h-12 rounded-xl ${
+                      className={`h-10 sm:h-12 rounded-xl text-sm sm:text-base ${
                         isRecording 
                           ? 'bg-red-500 hover:bg-red-600' 
                           : 'bg-red-500 hover:bg-red-600'
                       } text-white`}
                     >
-                      <Icon name={isRecording ? "Square" : "Circle"} size={16} className="mr-2" />
+                      <Icon name={isRecording ? "Square" : "Circle"} size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                       {isRecording ? 'Стоп' : 'Запись'}
                     </Button>
                   </>
@@ -279,17 +279,17 @@ const VideoRecording = ({
                     <Button 
                       variant="outline" 
                       onClick={onRetake}
-                      className="h-12 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200"
+                      className="h-10 sm:h-12 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200 text-sm sm:text-base"
                     >
-                      <Icon name="RotateCcw" size={16} className="mr-2" />
+                      <Icon name="RotateCcw" size={14} className="mr-1 sm:mr-2 sm:w-4 sm:h-4" />
                       Пересъёмка
                     </Button>
                     <Button 
                       onClick={onNext}
-                      className="h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-xl shadow-green-500/30 transition-all duration-300 font-semibold"
+                      className="h-10 sm:h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-xl shadow-green-500/30 transition-all duration-300 font-semibold text-sm sm:text-base"
                     >
                       Далее
-                      <Icon name="ArrowRight" size={16} className="ml-2" />
+                      <Icon name="ArrowRight" size={14} className="ml-1 sm:ml-2 sm:w-4 sm:h-4" />
                     </Button>
                   </>
                 )}
