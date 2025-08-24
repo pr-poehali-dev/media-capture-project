@@ -17,17 +17,19 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
       
       {/* Сетка для техно-эффекта */}
       <div className="absolute inset-0 opacity-10 bg-grid-pattern"></div>
-      {/* Основной контент */}
-      <div className="flex flex-col items-center justify-center flex-1 px-4 space-y-8 sm:space-y-12">
+      {/* Заголовок */}
+      <div className="flex flex-col items-center justify-center flex-1 px-4">
         <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-blue-900 animate-pulse-gentle text-center drop-shadow-lg leading-tight">
           IMPERIA PROMO
         </h1>
-        
-        {/* Кнопка */}
+      </div>
+      
+      {/* Кнопка внизу */}
+      <div className="w-full flex justify-center px-4 pb-8 sm:pb-12">
         <Button 
           onClick={onStart}
           size="lg"
-          className="w-full max-w-sm h-14 sm:h-16 text-lg sm:text-xl font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-2xl shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full max-w-sm h-14 sm:h-16 text-lg sm:text-xl font-semibold bg-slate-600 hover:bg-slate-700 text-white rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
           Новый лид
           <Icon name="ArrowRight" size={20} className="ml-2" />
