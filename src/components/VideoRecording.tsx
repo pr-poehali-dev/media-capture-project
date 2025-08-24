@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
+import { useNotesSync } from '@/hooks/useNotesSync';
 
 interface VideoRecordingProps {
   selectedImage: string | null;
@@ -39,6 +40,12 @@ const VideoRecording = ({
   onNotebookDataChange
 }: VideoRecordingProps) => {
   const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+
+  // Автоматическое сохранение данных анкеты в заметки устройства
+  const { saveManually } = useNotesSync({ 
+    notebookData, 
+    enabled: isRecording // Синхронизируем только во время записи
+  });
 
   const handleNotebookChange = (field: keyof NotebookData, value: string) => {
     // Разрешить ввод только во время активной записи
@@ -172,10 +179,23 @@ const VideoRecording = ({
                 </div>
 
                 <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                  <h4 className="text-sm font-medium text-blue-university mb-2 flex items-center">
-                    <Icon name="FileText" size={16} className="mr-2 text-blue-university" />
-                    Заметки
-                  </h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium text-blue-university flex items-center">
+                      <Icon name="FileText" size={16} className="mr-2 text-blue-university" />
+                      Заметки
+                    </h4>
+                    {(notebookData.parentName || notebookData.childName || notebookData.age) && (
+                      <Button
+                        onClick={saveManually}
+                        variant="outline"
+                        size="sm"
+                        className="h-6 px-2 text-xs bg-blue-100 hover:bg-blue-200 border-blue-200"
+                      >
+                        <Icon name="Download" size={12} className="mr-1" />
+                        Сохранить
+                      </Button>
+                    )}
+                  </div>
                   <div className="text-sm text-gray-600 space-y-2">
                     {notebookData.parentName && (
                       <div className="flex items-center">
