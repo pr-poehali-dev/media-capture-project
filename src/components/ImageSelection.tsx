@@ -13,6 +13,10 @@ interface ImageSelectionProps {
 const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageSelectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-blue-50 via-white to-blue-100 overflow-hidden">
       {/* Современные геометрические элементы фона */}
@@ -41,12 +45,12 @@ const ImageSelection = ({ selectedImage, onImageSelect, onBack, onNext }: ImageS
                 alt="Selected" 
                 className="w-full h-48 object-cover rounded-2xl shadow-md"
               />
-              <div className="absolute inset-0 rounded-2xl border-4 border-blue-university animate-pulse"></div>
+              <div className="absolute inset-0 rounded-2xl border-4 border-blue-600 animate-pulse"></div>
             </div>
           </div>
         ) : (
           <div 
-            onClick={() => fileInputRef.current?.click()}
+            onClick={handleClick}
             className="w-full h-48 border-2 border-dashed border-gray-300 rounded-2xl flex items-center justify-center cursor-pointer hover:border-blue-500 transition-colors mb-6 bg-gray-50"
           >
             <div className="text-center">
