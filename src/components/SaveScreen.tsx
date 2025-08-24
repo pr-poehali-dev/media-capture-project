@@ -33,63 +33,63 @@ const SaveScreen = ({
   onReset
 }: SaveScreenProps) => {
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-blue-50 via-white to-blue-100 overflow-hidden">
       {/* Современные геометрические элементы фона */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400 rounded-full blur-3xl animate-pulse-gentle"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-400 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '2s'}}></div>
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full blur-3xl animate-pulse-gentle"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-200 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '2s'}}></div>
       </div>
       
       {/* Сетка для техно-эффекта */}
-      <div className="absolute inset-0 opacity-5 bg-grid-pattern"></div>
+      <div className="absolute inset-0 opacity-10 bg-grid-pattern"></div>
 
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-black/20 backdrop-blur-xl border border-white/10">
+      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-white/80 backdrop-blur-xl border border-blue-200/50">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500/30 to-emerald-500/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-green-400/30">
-            <Icon name="CheckCircle" size={32} className="text-green-300" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-green-400/20">
+            <Icon name="CheckCircle" size={32} className="text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">Готово!</h2>
-          <p className="text-blue-200">Ваше видео готово к сохранению</p>
+          <h2 className="text-2xl font-bold text-blue-900 mb-2 drop-shadow-sm">Готово!</h2>
+          <p className="text-blue-600">Ваше видео готово к сохранению</p>
         </div>
 
         {selectedImage && (
           <div className="mb-4">
-            <p className="text-sm text-blue-200 mb-2">QR-код:</p>
+            <p className="text-sm text-blue-600 mb-2">QR-код:</p>
             <img 
               src={selectedImage} 
               alt="Selected" 
-              className="w-full h-32 object-cover rounded-xl border border-blue-400/30"
+              className="w-full h-32 object-cover rounded-xl border border-blue-200/50"
             />
           </div>
         )}
 
         {recordedVideo && (
           <div className="mb-6">
-            <p className="text-sm text-blue-200 mb-2">Записанное видео:</p>
+            <p className="text-sm text-blue-600 mb-2">Записанное видео:</p>
             <video 
               src={recordedVideo} 
               controls 
-              className="w-full h-32 object-cover rounded-xl border border-blue-400/30"
+              className="w-full h-32 object-cover rounded-xl border border-blue-200/50"
             />
           </div>
         )}
 
         {yandexUser && (
-          <div className="mb-4 p-3 bg-blue-500/20 rounded-xl border border-blue-400/30 backdrop-blur-sm">
+          <div className="mb-4 p-3 bg-blue-100/50 rounded-xl border border-blue-200/50 backdrop-blur-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <Icon name="User" size={16} className="text-blue-300 mr-2" />
+                <Icon name="User" size={16} className="text-blue-600 mr-2" />
                 <div>
-                  <p className="text-sm font-medium text-white">{yandexUser.name}</p>
-                  <p className="text-xs text-blue-200">{yandexUser.email}</p>
+                  <p className="text-sm font-medium text-blue-900">{yandexUser.name}</p>
+                  <p className="text-xs text-blue-600">{yandexUser.email}</p>
                 </div>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onLogoutFromYandex}
-                className="text-blue-300 hover:text-blue-200 hover:bg-blue-500/20"
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-100/50"
               >
                 <Icon name="LogOut" size={16} />
               </Button>
@@ -145,7 +145,7 @@ const SaveScreen = ({
           <Button 
             variant="outline"
             onClick={onReset}
-            className="w-full h-12 rounded-xl border-blue-300/50 text-blue-200 hover:bg-blue-500/20 backdrop-blur-sm bg-white/5"
+            className="w-full h-12 rounded-xl border-blue-400/60 text-blue-600 hover:bg-blue-100 backdrop-blur-sm bg-white/50"
           >
             Создать ещё
           </Button>
