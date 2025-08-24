@@ -9,12 +9,12 @@ export const useVideoRecording = () => {
 
   const startVideoRecording = async () => {
     try {
-      // Улучшенные настройки для мобильных устройств и iPhone
+      // Настройки для записи в качестве 480p для уменьшения размера файла
       const constraints = {
         video: {
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          frameRate: { ideal: 30 },
+          width: { ideal: 854, max: 854 },
+          height: { ideal: 480, max: 480 },
+          frameRate: { ideal: 30, max: 30 },
           facingMode: 'environment'
         },
         audio: {
