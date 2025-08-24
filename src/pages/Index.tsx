@@ -40,7 +40,7 @@ const Index = () => {
     shareToTelegram,
     isSharing,
     clearMemory
-  } = useTelegramShare();
+  } = useTelegramShare(notebookData);
 
   const {
     yandexUser,
