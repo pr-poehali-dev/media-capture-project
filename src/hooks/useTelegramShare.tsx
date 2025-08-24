@@ -46,9 +46,25 @@ export const useTelegramShare = () => {
       const response = await fetch(recordedVideo);
       const blob = await response.blob();
       
-      // Определяем расширение файла
-      const extension = blob.type.includes('mp4') ? 'mp4' : 'webm';
-      const filename = `imperia_video_${new Date().getTime()}.${extension}`;
+      // Проверяем размер видео (ограничение Telegram - 50 MB)
+      if (blob.size > 50 * 1024 * 1024) {
+        alert('📹 Видео слишком большое для отправки в Telegram (максимум 50 МБ). Попробуйте записать более короткое видео.');
+        return;
+      }
+      
+      // Определяем расширение файла и конвертируем в MP4 для лучшей совместимости
+      let finalBlob = blob;
+      let filename = `imperia_video_${new Date().getTime()}.mp4`;
+      
+      // Для мобильных платформ принудительно используем MP4 формат
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+      const isMobile = isIOS || isAndroid;
+      
+      if (isMobile && !blob.type.includes('mp4')) {
+        // Создаем новый blob с MP4 MIME типом для лучшей совместимости
+        finalBlob = new Blob([blob], { type: 'video/mp4' });
+      }
       
       // Формируем текст с данными анкеты и геолокацией
       let shareText = 'Видео создано с помощью IMPERIA PROMO 🎬';
@@ -72,7 +88,7 @@ export const useTelegramShare = () => {
       // Проверяем доступность Web Share API
       if (navigator.share && navigator.canShare) {
         try {
-          const file = new File([blob], filename, { type: blob.type });
+          const file = new File([finalBlob], filename, { type: finalBlob.type });
           
           // Проверяем поддержку файлов
           if (navigator.canShare({ files: [file] })) {
@@ -84,14 +100,10 @@ export const useTelegramShare = () => {
             return;
           }
         } catch (shareError) {
-          console.log('Web Share API недоступен:', shareError);
+          console.log('Web Share API недоступен, используем альтернативный метод:', shareError);
+          // Продолжаем с альтернативным методом
         }
       }
-
-      // Определяем платформу и браузер
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isAndroid = /Android/.test(navigator.userAgent);
-      const isMobile = isIOS || isAndroid;
       
       if (isMobile) {
         // Для мобильных устройств используем Telegram URL схему
@@ -101,30 +113,30 @@ export const useTelegramShare = () => {
         const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${telegramText}`;
         
         // Создаем временную ссылку для скачивания файла
-        const videoUrl = URL.createObjectURL(blob);
+        const videoUrl = URL.createObjectURL(finalBlob);
         activeUrlsRef.current.add(videoUrl);
         const downloadLink = document.createElement('a');
         downloadLink.href = videoUrl;
         downloadLink.download = filename;
         
-        // Показываем инструкции пользователю
+        // Улучшенные инструкции для мобильных платформ
         const instructions = isIOS 
-          ? `📱 Для отправки видео в Telegram на iPhone:\n\n1. Сначала сохраните видео в галерею:\n   • Нажмите "Сохранить локально"\n   • Следуйте инструкциям для сохранения\n\n2. Затем откройте Telegram:\n   • Выберите чат или канал\n   • Нажмите 📎 (прикрепить)\n   • Выберите "Фото и видео"\n   • Выберите сохраненное видео\n\n3. Добавьте описание: "Видео создано с IMPERIA PROMO 🎬"`
-          : `📱 Для отправки видео в Telegram на Android:\n\n1. Скачайте видео (автоматически начнется)\n2. Откройте Telegram\n3. Выберите чат или канал\n4. Нажмите 📎 → Файл\n5. Найдите файл "${filename}"\n6. Добавьте описание: "Видео создано с IMPERIA PROMO 🎬"`;
+          ? `📱 Отправка видео в Telegram на iPhone:\n\n1. Нажмите "OK" и сохраните видео\n2. Откройте приложение "Файлы" → "Загрузки"\n3. Найдите файл "${filename}"\n4. Нажмите "Поделиться" → выберите Telegram\n5. Выберите чат и отправьте\n\n💡 Или откройте Telegram → чат → 📎 → "Файл" → найдите видео`
+          : `📱 Отправка видео в Telegram на Android:\n\n1. Видео будет скачано автоматически\n2. Откройте Telegram → выберите чат\n3. Нажмите 📎 → "Файл"\n4. Найдите "${filename}" в папке "Загрузки"\n5. Выберите файл и отправьте\n\n💡 Размер: ${(finalBlob.size / (1024*1024)).toFixed(1)} МБ`;
 
-        alert(instructions);
-
-        // Автоматически скачиваем файл на Android
-        if (isAndroid) {
+        // Показываем инструкции с улучшенной информацией
+        if (confirm(instructions + '\n\nНачать скачивание?')) {
           document.body.appendChild(downloadLink);
           downloadLink.click();
           document.body.removeChild(downloadLink);
+          
+          // Открываем Telegram только на Android для упрощения процесса
+          if (isAndroid) {
+            setTimeout(() => {
+              window.open(telegramUrl, '_blank');
+            }, 1500);
+          }
         }
-
-        // Открываем Telegram для добавления описания
-        setTimeout(() => {
-          window.open(telegramUrl, '_blank');
-        }, 1000);
 
         // Очищаем URL через 2 минуты (сокращено для экономии памяти)
         setTimeout(() => {
@@ -134,7 +146,7 @@ export const useTelegramShare = () => {
 
       } else {
         // Для десктопа показываем инструкции
-        const videoUrl = URL.createObjectURL(blob);
+        const videoUrl = URL.createObjectURL(finalBlob);
         activeUrlsRef.current.add(videoUrl);
         const downloadLink = document.createElement('a');
         downloadLink.href = videoUrl;
@@ -151,13 +163,20 @@ export const useTelegramShare = () => {
         }, 1000);
 
         alert(
-          `💻 Для отправки в Telegram Web:\n\n` +
-          `1. Видео скачано: "${filename}"\n` +
+          `💻 Отправка в Telegram на компьютере:\n\n` +
+          `1. Видео скачано: "${filename}" (${(finalBlob.size / (1024*1024)).toFixed(1)} МБ)\n` +
           `2. Откройте Telegram Web или приложение\n` +
           `3. Выберите чат или канал\n` +
           `4. Перетащите файл в окно чата\n` +
-          `5. Добавьте описание: "Видео создано с IMPERIA PROMO 🎬"`
+          `5. Добавьте описание из буфера обмена`
         );
+        
+        // Копируем описание в буфер обмена для удобства
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareText).catch(() => {
+            console.log('Не удалось скопировать текст в буфер');
+          });
+        }
       }
 
     } catch (error) {

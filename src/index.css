@@ -92,3 +92,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .animate-pulse-gentle {
+    animation: pulse-gentle 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-gentle {
+    0%,
+    100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+  }
+}

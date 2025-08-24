@@ -14,6 +14,16 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         backgroundSize: 'contain'
       }}
     >
+      {/* Пульсирующее изображение на фоне */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div 
+          className="w-full h-full bg-contain bg-center bg-no-repeat animate-pulse-gentle opacity-70"
+          style={{
+            backgroundImage: `url('https://cdn.poehali.dev/files/0ccd0fdd-93aa-41f8-ad8d-66467510a595.jpeg')`,
+            animationDuration: '3s'
+          }}
+        />
+      </div>
       <Button 
         onClick={onStart}
         size="lg"
