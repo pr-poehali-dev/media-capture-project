@@ -12,6 +12,7 @@ interface SaveScreenProps {
   recordedVideo: string | null;
   yandexUser: YandexUser | null;
   isUploadingToCloud: boolean;
+  isSharing: boolean;
   onDownloadVideo: () => Promise<void>;
   onUploadToYandex: () => Promise<void>;
   onLogoutFromYandex: () => void;
@@ -24,6 +25,7 @@ const SaveScreen = ({
   recordedVideo, 
   yandexUser, 
   isUploadingToCloud,
+  isSharing,
   onDownloadVideo,
   onUploadToYandex,
   onLogoutFromYandex,
@@ -96,10 +98,20 @@ const SaveScreen = ({
 
           <Button 
             onClick={onShareToTelegram}
-            className="w-full h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl"
+            disabled={isSharing}
+            className="w-full h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50"
           >
-            <Icon name="Send" size={20} className="mr-2" />
-            Отправить в Telegram
+            {isSharing ? (
+              <>
+                <Icon name="Loader2" size={20} className="mr-2 animate-spin" />
+                Отправляется...
+              </>
+            ) : (
+              <>
+                <Icon name="Send" size={20} className="mr-2" />
+                Отправить в Telegram
+              </>
+            )}
           </Button>
 
           <Button 

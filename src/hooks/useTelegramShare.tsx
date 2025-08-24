@@ -1,4 +1,5 @@
 import { type NotebookData } from '@/components/VideoRecording';
+import { useState, useRef, useCallback } from 'react';
 
 interface LocationData {
   latitude: number;
@@ -7,12 +8,38 @@ interface LocationData {
 }
 
 export const useTelegramShare = () => {
-  const shareToTelegram = async (
+  const [isSharing, setIsSharing] = useState(false);
+  const activeUrlsRef = useRef<Set<string>>(new Set());
+  const shareCountRef = useRef(0);
+  const lastShareTimeRef = useRef<number>(0);
+  const shareToTelegram = useCallback(async (
     recordedVideo: string | null,
     notebookData: NotebookData,
     location: LocationData | null
   ) => {
     if (!recordedVideo) return;
+    
+    // Rate limiting: не больше 1 отправки в 3 секунды
+    const now = Date.now();
+    if (now - lastShareTimeRef.current < 3000) {
+      alert('⏱️ Подождите немного перед следующей отправкой');
+      return;
+    }
+    
+    // Проверка на одновременные отправки
+    if (isSharing) {
+      alert('📤 Видео уже отправляется, подождите завершения');
+      return;
+    }
+    
+    // Лимит на количество отправок без перезагрузки страницы
+    shareCountRef.current++;
+    if (shareCountRef.current > 10) {
+      alert('🔄 Для стабильной работы рекомендуем обновить страницу');
+    }
+    
+    lastShareTimeRef.current = now;
+    setIsSharing(true);
 
     try {
       // Получаем blob видео
@@ -75,6 +102,7 @@ export const useTelegramShare = () => {
         
         // Создаем временную ссылку для скачивания файла
         const videoUrl = URL.createObjectURL(blob);
+        activeUrlsRef.current.add(videoUrl);
         const downloadLink = document.createElement('a');
         downloadLink.href = videoUrl;
         downloadLink.download = filename;
@@ -98,14 +126,16 @@ export const useTelegramShare = () => {
           window.open(telegramUrl, '_blank');
         }, 1000);
 
-        // Очищаем URL через 5 минут
+        // Очищаем URL через 2 минуты (сокращено для экономии памяти)
         setTimeout(() => {
           URL.revokeObjectURL(videoUrl);
-        }, 300000);
+          activeUrlsRef.current.delete(videoUrl);
+        }, 120000);
 
       } else {
         // Для десктопа показываем инструкции
         const videoUrl = URL.createObjectURL(blob);
+        activeUrlsRef.current.add(videoUrl);
         const downloadLink = document.createElement('a');
         downloadLink.href = videoUrl;
         downloadLink.download = filename;
@@ -114,9 +144,11 @@ export const useTelegramShare = () => {
         downloadLink.click();
         document.body.removeChild(downloadLink);
 
+        // Быстро очищаем URL для десктопа
         setTimeout(() => {
           URL.revokeObjectURL(videoUrl);
-        }, 100);
+          activeUrlsRef.current.delete(videoUrl);
+        }, 1000);
 
         alert(
           `💻 Для отправки в Telegram Web:\n\n` +
@@ -137,10 +169,23 @@ export const useTelegramShare = () => {
         `2. Вручную отправить через Telegram\n\n` +
         `Ошибка: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`
       );
+    } finally {
+      setIsSharing(false);
     }
-  };
+  }, [isSharing]);
+  
+  // Функция для принудительной очистки памяти
+  const clearMemory = useCallback(() => {
+    activeUrlsRef.current.forEach(url => {
+      URL.revokeObjectURL(url);
+    });
+    activeUrlsRef.current.clear();
+    shareCountRef.current = 0;
+  }, []);
 
   return {
-    shareToTelegram
+    shareToTelegram,
+    isSharing,
+    clearMemory
   };
 };

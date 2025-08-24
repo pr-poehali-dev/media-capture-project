@@ -37,7 +37,9 @@ const Index = () => {
   } = useLocation();
 
   const {
-    shareToTelegram
+    shareToTelegram,
+    isSharing,
+    clearMemory
   } = useTelegramShare();
 
   const {
@@ -73,6 +75,7 @@ const Index = () => {
     setSelectedImage(null);
     resetRecording();
     resetLocation();
+    clearMemory(); // Очищаем память от URL объектов
     // Переходим на первый экран последним
     setCurrentStep(0);
   };
@@ -122,6 +125,7 @@ const Index = () => {
         recordedVideo={recordedVideo}
         yandexUser={yandexUser}
         isUploadingToCloud={isUploadingToCloud}
+        isSharing={isSharing}
         onDownloadVideo={downloadVideo}
         onUploadToYandex={handleUploadToYandex}
         onLogoutFromYandex={logoutFromYandex}
