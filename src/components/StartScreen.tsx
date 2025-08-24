@@ -10,9 +10,23 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
     <div className="relative flex flex-col justify-center items-center min-h-screen p-6 bg-gradient-to-b from-blue-50 to-blue-100">
       {/* Единственная центральная надпись с пульсацией */}
       <div className="flex flex-col items-center justify-center flex-1">
-        <h1 className="text-6xl md:text-8xl font-bold text-blue-university animate-pulse-gentle mb-8 text-center">
+        <h1 className="text-6xl md:text-8xl font-bold text-blue-university animate-pulse-gentle mb-4 text-center">
           IMPERIA PROMO
         </h1>
+        <div className="text-2xl md:text-3xl font-light text-blue-university-dark text-center">
+          {Array.from("СОВЕРШЕНСТВО В РАБОТЕ").map((letter, index) => (
+            <span
+              key={index}
+              className="inline-block animate-slide-in opacity-0"
+              style={{
+                animationDelay: `${index * 100}ms`,
+                animationFillMode: 'forwards'
+              }}
+            >
+              {letter === " " ? "\u00A0" : letter}
+            </span>
+          ))}
+        </div>
       </div>
       
       {/* Кнопка внизу */}

@@ -98,6 +98,10 @@
     animation: pulse-gentle 3s ease-in-out infinite;
   }
 
+  .animate-slide-in {
+    animation: slide-in 0.6s ease-out;
+  }
+
   @keyframes pulse-gentle {
     0%,
     100% {
@@ -107,6 +111,17 @@
     50% {
       opacity: 0.9;
       transform: scale(1.02);
+    }
+  }
+
+  @keyframes slide-in {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 }
