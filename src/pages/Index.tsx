@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import StartScreen from '@/components/StartScreen';
 import ImageSelection from '@/components/ImageSelection';
-import ParentForm from '@/components/ParentForm';
 import VideoRecording, { type NotebookData } from '@/components/VideoRecording';
 import SaveScreen from '@/components/SaveScreen';
 import AuthModal from '@/components/AuthModal';
@@ -84,7 +83,7 @@ const Index = () => {
   const handleRetake = () => {
     resetRecording();
     resetLocation();
-    setCurrentStep(3);
+    setCurrentStep(2);
   };
 
   const handleShareToTelegram = async () => {
@@ -98,17 +97,11 @@ const Index = () => {
   const screens = [
     () => <StartScreen onStart={() => setCurrentStep(1)} />,
     () => (
-      <ParentForm 
-        onBack={() => setCurrentStep(0)}
-        onNext={() => setCurrentStep(2)}
-      />
-    ),
-    () => (
       <ImageSelection 
         selectedImage={selectedImage}
         onImageSelect={handleImageSelect}
-        onBack={() => setCurrentStep(1)}
-        onNext={() => setCurrentStep(3)}
+        onBack={() => setCurrentStep(0)}
+        onNext={() => setCurrentStep(2)}
       />
     ),
     () => (
@@ -116,8 +109,8 @@ const Index = () => {
         selectedImage={selectedImage}
         recordedVideo={recordedVideo}
         isRecording={isRecording}
-        onBack={() => setCurrentStep(2)}
-        onNext={() => setCurrentStep(4)}
+        onBack={() => setCurrentStep(1)}
+        onNext={() => setCurrentStep(3)}
         onStartRecording={startVideoRecording}
         onStopRecording={stopVideoRecording}
         onRetake={handleRetake}
