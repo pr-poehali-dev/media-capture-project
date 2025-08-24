@@ -50,28 +50,28 @@ const VideoRecording = ({
     onNotebookDataChange?.(newData);
   };
   return (
-    <div className="relative flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 overflow-hidden">
+    <div className="relative flex flex-col lg:flex-row min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
       {/* Современные геометрические элементы фона */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full blur-3xl animate-pulse-gentle"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-200 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '2s'}}></div>
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400 rounded-full blur-3xl animate-pulse-gentle"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-400 rounded-full blur-3xl animate-pulse-gentle" style={{animationDelay: '2s'}}></div>
       </div>
       
       {/* Сетка для техно-эффекта */}
-      <div className="absolute inset-0 opacity-10 bg-grid-pattern"></div>
+      <div className="absolute inset-0 opacity-5 bg-grid-pattern"></div>
 
       <div className="max-w-7xl mx-auto w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 min-h-[calc(100vh-2rem)] lg:min-h-[calc(100vh-3rem)] p-4 lg:p-6">
           
           {/* Блок 1 - QR-код */}
-          <Card className="bg-white/80 backdrop-blur-xl border border-blue-200/50 p-6 shadow-2xl hover:shadow-xl transition-shadow">
+          <Card className="bg-black/20 backdrop-blur-xl border border-white/10 p-6 shadow-2xl hover:shadow-xl transition-shadow">
             <div className="relative h-full flex flex-col p-6">
               <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mr-3 backdrop-blur-sm border border-blue-400/20">
-                  <Icon name="QrCode" size={20} className="text-blue-600" />
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/50 to-purple-500/50 flex items-center justify-center mr-3 backdrop-blur-sm border border-blue-400/30">
+                  <Icon name="QrCode" size={20} className="text-blue-300" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-900 drop-shadow-sm">QR-код</h3>
+                <h3 className="text-lg font-semibold text-white drop-shadow-lg">QR-код</h3>
               </div>
               
               {selectedImage ? (
@@ -85,7 +85,7 @@ const VideoRecording = ({
                 </div>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center text-blue-600">
+                  <div className="text-center text-blue-200">
                     <Icon name="ImagePlus" size={48} className="mx-auto mb-2 opacity-50" />
                     <p className="text-sm">QR-код не выбран</p>
                   </div>
