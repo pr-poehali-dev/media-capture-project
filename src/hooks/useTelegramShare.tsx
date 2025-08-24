@@ -1,6 +1,5 @@
 import { type NotebookData } from '@/components/VideoRecording';
 import { useState, useRef, useCallback } from 'react';
-import { useLeadSaver } from './useLeadSaver';
 
 interface LocationData {
   latitude: number;
@@ -8,14 +7,11 @@ interface LocationData {
   address?: string;
 }
 
-export const useTelegramShare = (notebookData: NotebookData) => {
+export const useTelegramShare = () => {
   const [isSharing, setIsSharing] = useState(false);
   const activeUrlsRef = useRef<Set<string>>(new Set());
   const shareCountRef = useRef(0);
   const lastShareTimeRef = useRef<number>(0);
-  
-  // Хук для сохранения данных лида
-  const { saveForTelegramShare } = useLeadSaver({ notebookData });
   const shareToTelegram = useCallback(async (
     recordedVideo: string | null,
     notebookData: NotebookData,
@@ -46,8 +42,6 @@ export const useTelegramShare = (notebookData: NotebookData) => {
     setIsSharing(true);
 
     try {
-      // Сохраняем данные лида перед отправкой в Telegram
-      await saveForTelegramShare();
       // Получаем blob видео
       const response = await fetch(recordedVideo);
       const blob = await response.blob();
