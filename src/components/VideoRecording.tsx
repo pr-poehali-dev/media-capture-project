@@ -218,13 +218,13 @@ const VideoRecording = ({
           </Card>
 
           {/* Блок 3 - Запись видео */}
-          <Card className="bg-white p-6 shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="bg-white border border-gray-200 p-6 shadow-lg hover:shadow-xl transition-shadow rounded-xl">
             <div className="relative h-full flex flex-col p-6">
               <div className="flex items-center mb-4">
-                <div className="w-10 h-10 rounded-full bg-blue-university flex items-center justify-center mr-3">
+                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mr-3">
                   <Icon name="Video" size={20} className="text-white" />
                 </div>
-                <h3 className="text-lg font-semibold text-blue-university">Контроль качества</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Контроль качества</h3>
                 {isRecording && (
                   <div className="ml-auto">
                     <div className="flex items-center text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full animate-pulse">
