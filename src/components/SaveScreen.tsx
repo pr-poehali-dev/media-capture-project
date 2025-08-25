@@ -17,6 +17,7 @@ interface SaveScreenProps {
   onUploadToYandex: () => Promise<void>;
   onLogoutFromYandex: () => void;
   onShareToTelegram: () => Promise<void>;
+  onShareToWhatsApp: () => Promise<void>;
   onReset: () => void;
 }
 
@@ -30,6 +31,7 @@ const SaveScreen = ({
   onUploadToYandex,
   onLogoutFromYandex,
   onShareToTelegram,
+  onShareToWhatsApp,
   onReset
 }: SaveScreenProps) => {
   return (
@@ -96,23 +98,47 @@ const SaveScreen = ({
             Сохранить локально
           </Button>
 
-          <Button 
-            onClick={onShareToTelegram}
-            disabled={isSharing}
-            className="w-full h-11 sm:h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50 text-sm sm:text-base"
-          >
-            {isSharing ? (
-              <>
-                <Icon name="Loader2" size={18} className="mr-2 animate-spin sm:w-5 sm:h-5" />
-                Отправляется...
-              </>
-            ) : (
-              <>
-                <Icon name="Send" size={18} className="mr-2 sm:w-5 sm:h-5" />
-                Отправить в Telegram
-              </>
-            )}
-          </Button>
+          <div className="flex gap-2 sm:gap-3">
+            <Button 
+              onClick={onShareToTelegram}
+              disabled={isSharing}
+              className="flex-1 h-11 sm:h-12 bg-blue-400 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50 text-sm sm:text-base"
+            >
+              {isSharing ? (
+                <>
+                  <Icon name="Loader2" size={16} className="mr-1 sm:mr-2 animate-spin" />
+                  <span className="hidden sm:inline">Отправка...</span>
+                  <span className="sm:hidden">...</span>
+                </>
+              ) : (
+                <>
+                  <Icon name="Send" size={16} className="mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Telegram</span>
+                  <span className="sm:hidden">TG</span>
+                </>
+              )}
+            </Button>
+            
+            <Button 
+              onClick={onShareToWhatsApp}
+              disabled={isSharing}
+              className="flex-1 h-11 sm:h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl disabled:opacity-50 text-sm sm:text-base"
+            >
+              {isSharing ? (
+                <>
+                  <Icon name="Loader2" size={16} className="mr-1 sm:mr-2 animate-spin" />
+                  <span className="hidden sm:inline">Отправка...</span>
+                  <span className="sm:hidden">...</span>
+                </>
+              ) : (
+                <>
+                  <Icon name="MessageCircle" size={16} className="mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">WhatsApp</span>
+                  <span className="sm:hidden">WA</span>
+                </>
+              )}
+            </Button>
+          </div>
 
           <Button 
             onClick={onUploadToYandex}

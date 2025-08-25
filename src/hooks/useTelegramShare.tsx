@@ -42,21 +42,49 @@ export const useTelegramShare = () => {
     setIsSharing(true);
 
     try {
-      // Получаем blob видео
-      const response = await fetch(recordedVideo);
-      const blob = await response.blob();
+      // Получаем blob видео с проверкой на валидность URL
+      let blob: Blob;
+      
+      if (recordedVideo.startsWith('blob:')) {
+        const response = await fetch(recordedVideo);
+        if (!response.ok) {
+          throw new Error(`Ошибка загрузки видео: ${response.status}`);
+        }
+        blob = await response.blob();
+      } else if (recordedVideo.startsWith('data:')) {
+        // Если это data URL, конвертируем в blob
+        const response = await fetch(recordedVideo);
+        blob = await response.blob();
+      } else {
+        throw new Error('Неподдерживаемый формат видео URL');
+      }
+      
+      // Проверяем размер видео
+      if (blob.size === 0) {
+        throw new Error('Видеофайл пустой');
+      }
+      
+      if (blob.size > 50 * 1024 * 1024) { // 50MB лимит
+        alert('⚠️ Видео слишком большое для отправки в Telegram (>50МБ)');
+        return;
+      }
       
       // Определяем расширение файла и конвертируем в MP4 для лучшей совместимости
       let finalBlob = blob;
       let filename = `imperia_video_${new Date().getTime()}.mp4`;
       
-      // Для мобильных платформ принудительно используем MP4 формат
+      // Определяем устройство и платформу
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isAndroid = /Android/.test(navigator.userAgent);
       const isMobile = isIOS || isAndroid;
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
       
-      if (isMobile && !blob.type.includes('mp4')) {
-        // Создаем новый blob с MP4 MIME типом для лучшей совместимости
+      // Устанавливаем правильный MIME тип для лучшей совместимости
+      if (blob.type === '' || blob.type === 'video/webm' || (isMobile && !blob.type.includes('mp4'))) {
+        // Для мобильных устройств и если тип не определен, используем MP4
+        finalBlob = new Blob([blob], { type: 'video/mp4' });
+      } else if (isSafari && blob.type.includes('webm')) {
+        // Safari лучше работает с MP4
         finalBlob = new Blob([blob], { type: 'video/mp4' });
       }
       
@@ -79,56 +107,87 @@ export const useTelegramShare = () => {
         shareText += `\n🗺️ Карта: https://maps.google.com/maps?q=${location.latitude},${location.longitude}`;
       }
       
-      // Проверяем доступность Web Share API
-      if (navigator.share && navigator.canShare) {
+      // Проверяем доступность Web Share API с улучшенной совместимостью
+      if (navigator.share && typeof navigator.canShare === 'function') {
         try {
-          const file = new File([finalBlob], filename, { type: finalBlob.type });
+          const file = new File([finalBlob], filename, { 
+            type: finalBlob.type,
+            lastModified: Date.now()
+          });
           
           // Проверяем поддержку файлов
-          if (navigator.canShare({ files: [file] })) {
+          const canShareFiles = await navigator.canShare({ files: [file] }).catch(() => false);
+          
+          if (canShareFiles) {
             await navigator.share({
               title: 'IMPERIA PROMO Video',
               text: shareText,
               files: [file]
             });
+            
+            // Если Web Share API сработал успешно
+            alert('✅ Видео успешно передано в выбранное приложение!');
             return;
+          } else {
+            console.log('Файлы не поддерживаются Web Share API');
           }
         } catch (shareError) {
-          console.log('Web Share API недоступен, используем альтернативный метод:', shareError);
+          console.log('Web Share API ошибка:', shareError);
           // Продолжаем с альтернативным методом
         }
       }
       
       if (isMobile) {
-        // Для мобильных устройств используем Telegram URL схему
-        const telegramText = encodeURIComponent(shareText);
-        
-        // Сначала пробуем открыть Telegram через URL схему
-        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${telegramText}`;
-        
-        // Создаем временную ссылку для скачивания файла
+        // Создаем улучшенную ссылку для скачивания
         const videoUrl = URL.createObjectURL(finalBlob);
         activeUrlsRef.current.add(videoUrl);
+        
         const downloadLink = document.createElement('a');
         downloadLink.href = videoUrl;
         downloadLink.download = filename;
+        downloadLink.style.display = 'none';
         
-        // Улучшенные инструкции для мобильных платформ
+        // Улучшенные инструкции с актуальной информацией
+        const sizeText = `${(finalBlob.size / (1024*1024)).toFixed(1)} МБ`;
         const instructions = isIOS 
-          ? `📱 Отправка видео в Telegram на iPhone:\n\n1. Нажмите "OK" и сохраните видео\n2. Откройте приложение "Файлы" → "Загрузки"\n3. Найдите файл "${filename}"\n4. Нажмите "Поделиться" → выберите Telegram\n5. Выберите чат и отправьте\n\n💡 Или откройте Telegram → чат → 📎 → "Файл" → найдите видео`
-          : `📱 Отправка видео в Telegram на Android:\n\n1. Видео будет скачано автоматически\n2. Откройте Telegram → выберите чат\n3. Нажмите 📎 → "Файл"\n4. Найдите "${filename}" в папке "Загрузки"\n5. Выберите файл и отправьте\n\n💡 Размер: ${(finalBlob.size / (1024*1024)).toFixed(1)} МБ`;
+          ? `📱 Отправка в Telegram/WhatsApp на iPhone:\n\n✅ АВТОМАТИЧЕСКОЕ СКАЧИВАНИЕ:\n1. Видео сохранится в "Файлы" → "Загрузки"\n2. Откройте Telegram/WhatsApp\n3. Выберите чат → 📎 → "Файл"\n4. Найдите "${filename}" (${sizeText})\n5. Отправьте\n\n🔄 ИЛИ ЧЕРЕЗ ПОДЕЛИТЬСЯ:\nФайлы → найдите видео → Поделиться → выберите мессенджер`
+          : `📱 Отправка в Telegram/WhatsApp на Android:\n\n✅ ПРОСТОЙ СПОСОБ:\n1. Видео автоматически скачается\n2. Откройте уведомление о загрузке\n3. Нажмите "Поделиться" → выберите мессенджер\n\n📁 ИЛИ ВРУЧНУЮ:\nTelegram/WhatsApp → чат → 📎 → "Файл" → "Загрузки" → "${filename}" (${sizeText})`;
 
-        // Показываем инструкции с улучшенной информацией
-        if (confirm(instructions + '\n\nНачать скачивание?')) {
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-          
-          // Открываем Telegram только на Android для упрощения процесса
-          if (isAndroid) {
+        // Показываем инструкции
+        const userConfirmed = confirm(instructions + '\n\nНачать скачивание?');
+        
+        if (userConfirmed) {
+          try {
+            // Добавляем в DOM и кликаем
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            
+            // Показываем уведомление об успехе
             setTimeout(() => {
-              window.open(telegramUrl, '_blank');
-            }, 1500);
+              alert('📥 Скачивание началось! Проверьте уведомления или папку "Загрузки".');
+            }, 500);
+            
+            // Для Android также пробуем открыть Telegram Web
+            if (isAndroid) {
+              const telegramText = encodeURIComponent(shareText.substring(0, 200)); // Ограничиваем длину
+              const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${telegramText}`;
+              
+              setTimeout(() => {
+                const shouldOpenTelegram = confirm('📱 Открыть Telegram для быстрой отправки?');
+                if (shouldOpenTelegram) {
+                  window.open(telegramUrl, '_blank');
+                }
+              }, 2000);
+            }
+            
+          } catch (downloadError) {
+            console.error('Ошибка скачивания:', downloadError);
+            alert('❌ Ошибка скачивания. Попробуйте еще раз или используйте другой браузер.');
+          } finally {
+            // Очищаем DOM
+            if (downloadLink.parentNode) {
+              document.body.removeChild(downloadLink);
+            }
           }
         }
 

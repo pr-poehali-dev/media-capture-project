@@ -90,6 +90,10 @@ const Index = () => {
     await shareToTelegram(recordedVideo, notebookData, location);
   };
 
+  const handleShareToWhatsApp = async () => {
+    await shareToTelegram(recordedVideo, notebookData, location); // Используем ту же функцию, она поддерживает WhatsApp
+  };
+
   const handleUploadToYandex = async () => {
     await uploadToYandexDisk(recordedVideo);
   };
@@ -130,6 +134,7 @@ const Index = () => {
         onUploadToYandex={handleUploadToYandex}
         onLogoutFromYandex={logoutFromYandex}
         onShareToTelegram={handleShareToTelegram}
+        onShareToWhatsApp={handleShareToWhatsApp}
         onReset={resetApp}
       />
     )
